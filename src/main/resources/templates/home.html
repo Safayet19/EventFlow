@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="Discover technology conferences, workshops, meetups and more on EventFlow. Find your next great experience.">
+    <title>EventFlow | Your Next Great Experience</title>
+    <link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png}" href="/images/eventflow-favicon.png">
+    <link rel="stylesheet" th:href="@{/css/site.css(v='20261010home2')}" href="/css/site.css?v=20261010home2">
+    <link rel="stylesheet" th:href="@{/css/public.css(v='20261010home2')}" href="/css/public.css?v=20261010home2">
+    <link rel="stylesheet" th:href="@{/css/home-v2.css(v='20261010home2')}" href="/css/home-v2.css?v=20261010home2">
+</head>
+<body class="ef-home">
+<!-- Reusable inline icons avoid requiring an icon CDN to render the homepage. -->
+<svg class="ef-icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <symbol id="ef-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7.1"/><path d="m16.2 16.2 5.1 5.1"/></symbol>
+    <symbol id="ef-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="ef-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+    <symbol id="ef-laptop" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="12" rx="1"/><path d="M2 20h20l-2-4H4z"/></symbol>
+    <symbol id="ef-briefcase" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M2 12l10 4 10-4M12 13v4"/></symbol>
+    <symbol id="ef-education" viewBox="0 0 24 24"><path d="m2 9 10-5 10 5-10 5L2 9Zm4 3v5c3.6 3 8.4 3 12 0v-5M22 9v8"/></symbol>
+    <symbol id="ef-heart" viewBox="0 0 24 24"><path d="M20.6 5.6a5 5 0 0 0-7.1 0L12 7.1l-1.5-1.5a5 5 0 1 0-7.1 7.1L12 21l8.6-8.3a5 5 0 0 0 0-7.1Z"/><path d="M5 12h4l2-4 2 8 2-4h4"/></symbol>
+    <symbol id="ef-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13M9 9l12-2"/><ellipse cx="6" cy="18" rx="3" ry="2"/><ellipse cx="18" cy="16" rx="3" ry="2"/></symbol>
+    <symbol id="ef-trophy" viewBox="0 0 24 24"><path d="M7 3h10v8a5 5 0 0 1-10 0V3Zm0 2H3v3a4 4 0 0 0 4 4m10-7h4v3a4 4 0 0 1-4 4M12 16v4m-5 1h10"/></symbol>
+    <symbol id="ef-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6m10-6v6M3 10h18m-13 4h3m-3 3h3"/></symbol>
+    <symbol id="ef-location" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.7"/></symbol>
+</svg>
+
+<header class="ef-header">
+    <div class="ef-header-inner ef-container">
+        <a class="ef-brand" th:href="@{/}" href="/" aria-label="EventFlow home">
+            <!-- Preserve the project's existing original logo asset exactly. -->
+            <img th:src="@{/images/eventflow-logo-original.png}" src="/images/eventflow-logo-original.png" alt="EventFlow" width="204" height="68">
+        </a>
+        <nav class="ef-main-nav" aria-label="Main navigation">
+            <a class="is-active" aria-current="page" th:href="@{/}" href="/">Home</a>
+            <a th:href="@{/events}" href="/events">Explore Events</a>
+            <a href="#about">About</a>
+        </nav>
+        <div class="ef-header-actions">
+            <button class="ef-nav-search" type="button" id="efNavSearch" aria-label="Focus event search" title="Search events">
+                <svg class="ef-icon"><use href="#ef-search"></use></svg>
+            </button>
+            <th:block th:if="${user == null}">
+                <a class="ef-login" th:href="@{/login}" href="/login">Login</a>
+                <a class="ef-signup" th:href="@{/register}" href="/register">Sign Up</a>
+            </th:block>
+            <a class="ef-signup ef-dashboard-link" th:if="${user != null}" th:href="@{/dashboard}" href="/dashboard">Dashboard</a>
+        </div>
+    </div>
+</header>
+
+<main id="main-content">
+    <section class="ef-hero" aria-labelledby="efHeroTitle">
+        <div class="ef-container ef-hero-content">
+            <p class="ef-eyebrow">EVENTS · LEARN · CONNECT</p>
+            <h1 id="efHeroTitle">Your Next Great<br>Experience Starts Here</h1>
+            <p class="ef-hero-subtitle">Discover amazing events, workshops, conferences and<br class="ef-desktop-break"> meetups happening around you.</p>
+            <form class="ef-search-form" th:action="@{/events}" action="/events" method="get" role="search">
+                <svg class="ef-icon ef-search-icon"><use href="#ef-search"></use></svg>
+                <label class="ef-sr-only" for="efEventSearch">Search events</label>
+                <input id="efEventSearch" name="q" type="search" placeholder="Search events..." autocomplete="off" maxlength="120">
+                <button type="submit">Search <svg class="ef-icon ef-search-arrow"><use href="#ef-arrow"></use></svg></button>
+            </form>
+        </div>
+    </section>
+
+    <section class="ef-categories ef-container" aria-label="Browse by event category">
+        <a class="ef-category-tile ef-all is-selected" th:href="@{/events}" href="/events">
+            <svg class="ef-icon"><use href="#ef-grid"></use></svg><span>All Events</span>
+        </a>
+        <a class="ef-category-tile ef-tech" th:href="@{/events(category='Technology')}" href="/events?category=Technology">
+            <svg class="ef-icon"><use href="#ef-laptop"></use></svg><span>Technology</span>
+        </a>
+        <a class="ef-category-tile ef-business" th:href="@{/events(category='Business')}" href="/events?category=Business">
+            <svg class="ef-icon"><use href="#ef-briefcase"></use></svg><span>Business</span>
+        </a>
+        <a class="ef-category-tile ef-education" th:href="@{/events(category='Education')}" href="/events?category=Education">
+            <svg class="ef-icon"><use href="#ef-education"></use></svg><span>Education</span>
+        </a>
+        <a class="ef-category-tile ef-health" th:href="@{/events(category='Health')}" href="/events?category=Health">
+            <svg class="ef-icon"><use href="#ef-heart"></use></svg><span>Health</span>
+        </a>
+        <a class="ef-category-tile ef-music" th:href="@{/events(category='Music')}" href="/events?category=Music">
+            <svg class="ef-icon"><use href="#ef-music"></use></svg><span>Music</span>
+        </a>
+        <a class="ef-category-tile ef-sports" th:href="@{/events(category='Sports')}" href="/events?category=Sports">
+            <svg class="ef-icon"><use href="#ef-trophy"></use></svg><span>Sports</span>
+        </a>
+    </section>
+
+    <section class="ef-upcoming ef-container" aria-labelledby="efUpcomingHeading">
+        <div class="ef-section-header">
+            <h2 id="efUpcomingHeading">Upcoming Events</h2>
+            <a class="ef-view-all" th:href="@{/events}" href="/events">View All Events <svg class="ef-icon"><use href="#ef-arrow"></use></svg></a>
+        </div>
+
+        <div class="ef-event-grid" th:if="${!#lists.isEmpty(featuredEvents)}">
+            <article class="ef-event-card" th:each="event, stat : ${featuredEvents}" th:if="${stat.index lt 4}">
+                <a class="ef-event-photo" th:href="@{'/events/' + ${event.id}}" href="/events" th:aria-label="${'View details for ' + event.title}">
+                    <img data-event-image th:src="${event.imageUrl != null and !#strings.isEmpty(event.imageUrl) ? event.imageUrl : '/images/event-visual.png'}"
+                         src="/images/event-visual.png" th:alt="${event.title + ' event photo'}" alt="Event photo" loading="lazy" decoding="async">
+                    <span class="ef-card-category" th:classappend="${' ef-category-' + #strings.toLowerCase(event.category)}" th:text="${event.category}">Technology</span>
+                </a>
+                <div class="ef-card-body">
+                    <h3><a th:href="@{'/events/' + ${event.id}}" href="/events" th:text="${event.title}">Tech Innovation Summit</a></h3>
+                    <div class="ef-card-meta">
+                        <div><svg class="ef-icon"><use href="#ef-calendar"></use></svg><span th:text="${event.formattedDate}">20 May 2026</span></div>
+                        <div><svg class="ef-icon"><use href="#ef-location"></use></svg><span th:text="${event.location}">Dhaka, Bangladesh</span></div>
+                    </div>
+                    <div class="ef-card-bottom">
+                        <strong class="ef-card-price" th:classappend="${event.paid} ? '' : ' ef-price-free'" th:text="${startingPrices[event.id]}">Free</strong>
+                        <a class="ef-details-button" th:href="@{'/events/' + ${event.id}}" href="/events">View Details <svg class="ef-icon"><use href="#ef-arrow"></use></svg></a>
+                    </div>
+                </div>
+            </article>
+        </div>
+        <div class="ef-empty-events" th:if="${#lists.isEmpty(featuredEvents)}">
+            <h3>No upcoming events yet</h3>
+            <p>Check back soon, or explore all the events on EventFlow.</p>
+            <a class="ef-details-button" th:href="@{/events}" href="/events">Explore Events <svg class="ef-icon"><use href="#ef-arrow"></use></svg></a>
+        </div>
+    </section>
+
+    <section class="ef-about ef-container" id="about" aria-labelledby="efAboutHeading">
+        <p class="ef-eyebrow">ABOUT EVENTFLOW</p>
+        <h2 id="efAboutHeading">Great experiences start with showing up.</h2>
+        <p>EventFlow makes it easy to discover local events, connect with communities, and save your spot — all in one place.</p>
+        <a th:href="@{/events}" href="/events">Explore Events <svg class="ef-icon"><use href="#ef-arrow"></use></svg></a>
+    </section>
+</main>
+
+<div th:replace="~{fragments :: publicFooter}"></div>
+<script th:src="@{/js/site.js(v='20261010home2')}" src="/js/site.js?v=20261010home2"></script>
+<script th:src="@{/js/home-v2.js(v='20261010home2')}" src="/js/home-v2.js?v=20261010home2"></script>
+</body>
+</html>

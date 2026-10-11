@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventFlow | Participants</title>
+    <link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png(v='20260923couponcontact1')}" href="/images/eventflow-favicon.png?v=20260923couponcontact1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css(v=20261011clean)}" href="/css/site.css?v=20261011clean">
+    <link rel="stylesheet" th:href="@{/css/workspace-final.css(v=20261011full)}" href="/css/workspace-final.css?v=20261011full">
+</head>
+<body class="ef-workspace">
+<div th:replace="~{fragments :: topbar}"></div>
+<div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('myevents')}"></div>
+    <main class="app-main">
+        <section class="page-heading">
+            <div><a class="back-link" th:href="@{/organizer/events}"><i class="bi bi-arrow-left"></i>My Events</a><h1 th:text="${event.title}">Event title</h1><p><span th:text="${@display.eventDate(event)}">Date</span> · <span th:text="${event.location}">Location</span></p></div>
+            <div class="heading-stat"><span>Registered</span><strong th:text="${#lists.size(registrations) + ' / ' + event.capacity}">0 / 100</strong></div>
+        </section>
+
+        <section class="table-card">
+            <div class="table-toolbar"><div><span class="section-kicker">PARTICIPANTS</span><h2>Registration list</h2></div><div class="table-count" th:text="${#lists.size(registrations) + ' people'}">0 people</div></div>
+            <div class="data-table-wrap" th:if="${!#lists.isEmpty(registrations)}">
+                <table class="data-table"><thead><tr><th>Participant</th><th>Email</th><th>Ticket</th><th>Registered</th><th>Status</th></tr></thead><tbody>
+                <tr th:each="registration : ${registrations}"><td><div class="table-user"><img loading="lazy" class="avatar avatar-image" th:src="${participantMap[registration.participantId] != null and participantMap[registration.participantId].profileImageUrl != null ? participantMap[registration.participantId].profileImageUrl : '/images/default-avatar.png'}" src="/images/default-avatar.png" alt="Profile picture"><strong th:text="${registration.participantName}">Name</strong></div></td><td th:text="${registration.participantEmail}">email</td><td><div class="booking-ticket-cell"><strong th:text="${@display.ticketName(registration)}">General Admission</strong><small th:text="${@display.ticketPaid(registration)}">Free</small></div></td><td th:text="${@display.registrationTime(registration)}">Date</td><td><span class="status-badge success-status">REGISTERED</span></td></tr>
+                </tbody></table>
+            </div>
+            <div class="clean-empty" th:if="${#lists.isEmpty(registrations)}"><i class="bi bi-people"></i><h3>No registrations yet</h3><p>Participants will appear here as soon as they register.</p></div>
+        </section>
+    </main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div><script th:src="@{/js/site.js(v='20260923couponcontact1')}" src="/js/site.js?v=20260923couponcontact1"></script>
+
+<script th:src="@{/js/workspace-final.js(v=20261011clean)}" src="/js/workspace-final.js?v=20261011clean" defer></script>
+</body>
+</html>

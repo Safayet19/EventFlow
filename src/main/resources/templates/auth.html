@@ -1,0 +1,107 @@
+<!DOCTYPE html><html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#ffffff">
+<title>EventFlow | Login & Register</title>
+<link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png}" href="/images/eventflow-favicon.png">
+<link rel="stylesheet" th:href="@{/css/v1-public.css(v=20261011full)}" href="/css/v1-public.css?v=20261011full">
+<link rel="stylesheet" th:href="@{/css/auth-v1.css(v=20261011registerreadable)}" href="/css/auth-v1.css?v=20261011registerreadable">
+</head><body class="v1-page v1-auth-page" th:classappend="${activeTab == 'register'} ? ' v1-register-open' : ''" th:attr="data-forgot-open=${forgotOpen},data-forgot-step=${forgotStep},data-forgot-email=${forgotEmail},data-forgot-error=${forgotError}">
+<div th:replace="~{fragments :: v1Nav('auth')}"></div>
+<main class="v1-auth-scene">
+  <div class="v1-auth-main v1-container" th:classappend="${!demoAccessAvailable} ? ' no-demo' : ''">
+    <section class="v1-auth-hero" aria-label="Welcome to EventFlow">
+      <p class="v1-eyebrow">EVENTS · LEARN · CONNECT</p>
+      <h1 id="v1AuthHeroTitle">Welcome<br><em>Back</em></h1>
+      <p id="v1AuthHeroDescription">Log in to your EventFlow account and continue your event journey.</p>
+    </section>
+    <section class="v1-auth-panel" aria-label="Login and registration">
+      <div class="v1-auth-tabs" role="tablist" aria-label="Account access">
+        <button id="loginTab" type="button" role="tab" aria-selected="true" aria-controls="loginView" class="is-active">Login</button>
+        <button id="registerTab" type="button" role="tab" aria-selected="false" aria-controls="registerView">Register</button>
+      </div>
+      <div class="v1-alert is-error" th:if="${loginError != null}" th:text="${loginError}" role="alert">Login failed</div>
+      <div class="v1-alert is-error" th:if="${registerError != null}" th:text="${registerError}" role="alert">Registration failed</div>
+      <div class="v1-alert is-success" th:if="${registerSuccess != null}" th:text="${registerSuccess}" role="status">Created</div>
+      <div id="v1LogoutSuccess" class="v1-alert is-success" th:if="${logoutSuccess != null and activeTab != 'register'}" th:text="${logoutSuccess}" role="status">Logged out</div>
+      <div class="v1-alert is-success" th:if="${passwordResetSuccess != null}" th:text="${passwordResetSuccess}" role="status">Password updated</div>
+      <section id="loginView" aria-labelledby="loginTab">
+        <form id="loginForm" th:action="@{/login}" method="post">
+          <input type="hidden" name="redirect" th:value="${redirect}">
+          <label for="loginEmail">Email address</label>
+          <div class="v1-auth-input"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m3 7 9 7 9-7"/></svg><input id="loginEmail" name="email" type="email" placeholder="you@example.com" autocomplete="email" required></div>
+          <label for="loginPassword">Password</label>
+          <div class="v1-auth-input"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><input id="loginPassword" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required><button type="button" class="v1-password-toggle" data-target="loginPassword" aria-label="Show password"><svg class="v1-eye-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/></svg><svg class="v1-eye-closed" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.7 6.1c.42-.07.86-.1 1.3-.1 6 0 9.5 6 9.5 6a16.8 16.8 0 0 1-3.2 3.8M7.1 7.4A16 16 0 0 0 2.5 12s3.5 6 9.5 6c1.26 0 2.42-.26 3.5-.68M10 10l4 4"/></svg></button></div>
+          <div class="v1-auth-form-row"><label class="v1-remember"><input name="remember-me" type="checkbox"> Remember me</label><a id="v1ForgotLink" th:href="@{/forgot-password}" href="/forgot-password">Forgot password?</a></div>
+          <button class="v1-gold-button v1-auth-submit" type="submit">Sign In</button>
+          <p class="v1-demo-selection" id="v1DemoSelection" role="status" aria-live="polite" hidden></p>
+        </form>
+      </section>
+      <section id="registerView" aria-labelledby="registerTab" hidden>
+        <form id="registerForm" th:action="@{/register}" method="post">
+          <input type="hidden" name="redirect" th:value="${redirect}">
+          <label for="fullName">Full name</label><div class="v1-auth-input"><input id="fullName" name="fullName" type="text" th:value="${formName}" autocomplete="name" minlength="3" maxlength="50" placeholder="Your full name" required></div>
+          <label for="role">Account type</label><div class="v1-auth-input"><select id="role" name="role" required><option value="">Choose a role</option><option value="PARTICIPANT" th:selected="${formRole == 'PARTICIPANT'}">Participant</option><option value="ORGANIZER" th:selected="${formRole == 'ORGANIZER'}">Organizer</option></select></div>
+          <label for="registerEmail">Email address</label><div class="v1-auth-input"><input id="registerEmail" name="email" type="email" th:value="${formEmail}" placeholder="you@example.com" autocomplete="email" required></div>
+          <label for="registerPassword">Password</label><div class="v1-auth-input"><input id="registerPassword" name="password" type="password" placeholder="Create a strong password" autocomplete="new-password" minlength="8" required><button type="button" class="v1-password-toggle" data-target="registerPassword" aria-label="Show password"><svg class="v1-eye-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/></svg><svg class="v1-eye-closed" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.7 6.1c.42-.07.86-.1 1.3-.1 6 0 9.5 6 9.5 6a16.8 16.8 0 0 1-3.2 3.8M7.1 7.4A16 16 0 0 0 2.5 12s3.5 6 9.5 6c1.26 0 2.42-.26 3.5-.68M10 10l4 4"/></svg></button></div>
+          <div class="v1-strength" id="v1PasswordStrength" aria-live="polite">
+            <div class="v1-strength-line"><span>Password strength</span><strong id="v1StrengthLabel">Enter a password</strong></div>
+            <div class="v1-strength-track" role="progressbar" aria-label="Password strength" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0" id="v1StrengthMeter"><span id="v1StrengthBar"></span></div>
+            <div class="v1-password-rules" id="v1PasswordRules">
+              <span data-strength-rule="length">8+ characters</span><span data-strength-rule="lower">Lowercase</span>
+              <span data-strength-rule="upper">Uppercase</span><span data-strength-rule="number">Number</span>
+              <span data-strength-rule="symbol">Symbol</span>
+            </div>
+          </div>
+          <label for="confirmPassword">Confirm password</label><div class="v1-auth-input"><input id="confirmPassword" name="confirmPassword" type="password" placeholder="Repeat password" autocomplete="new-password" minlength="8" required><button type="button" class="v1-password-toggle" data-target="confirmPassword" aria-label="Show password"><svg class="v1-eye-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/></svg><svg class="v1-eye-closed" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.7 6.1c.42-.07.86-.1 1.3-.1 6 0 9.5 6 9.5 6a16.8 16.8 0 0 1-3.2 3.8M7.1 7.4A16 16 0 0 0 2.5 12s3.5 6 9.5 6c1.26 0 2.42-.26 3.5-.68M10 10l4 4"/></svg></button></div>
+          <p class="v1-match-status" id="v1PasswordMatch" aria-live="polite"></p>
+          <p class="v1-inline-error" id="v1RegisterError" aria-live="polite"></p>
+          <button class="v1-gold-button v1-auth-submit" type="submit">Create Account</button>
+        </form>
+      </section>
+    </section>
+    <aside class="v1-quick-panel" th:if="${demoAccessAvailable}" aria-label="Quick Access demo accounts">
+      <h2>Quick Access</h2>
+      <div class="v1-quick-role">
+        <button type="button" class="v1-demo-option" data-demo-role="Admin" data-demo-email="admin@eventflow.com" data-demo-password="Admin123!" aria-label="Fill Admin demo login details"><span class="v1-role-icon admin" aria-hidden="true"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.3"/><path d="M4.5 20c.3-4.4 3.2-6.8 7.5-6.8s7.2 2.4 7.5 6.8"/></svg></span><span><strong>Admin</strong><small>Manage users and events</small></span><span class="v1-chevron" aria-hidden="true">›</span></button>
+      </div>
+      <div class="v1-quick-role">
+        <button type="button" class="v1-demo-option" data-demo-role="Organizer" data-demo-email="organizer@eventflow.com" data-demo-password="Organizer123!" aria-label="Fill Organizer demo login details"><span class="v1-role-icon organizer" aria-hidden="true"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.3"/><path d="M4.5 20c.3-4.4 3.2-6.8 7.5-6.8s7.2 2.4 7.5 6.8"/></svg></span><span><strong>Organizer</strong><small>Create and manage events</small></span><span class="v1-chevron" aria-hidden="true">›</span></button>
+      </div>
+      <div class="v1-quick-role">
+        <button type="button" class="v1-demo-option" data-demo-role="Participant" data-demo-email="participant@eventflow.com" data-demo-password="Participant123!" aria-label="Fill Participant demo login details"><span class="v1-role-icon participant" aria-hidden="true"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.3"/><path d="M4.5 20c.3-4.4 3.2-6.8 7.5-6.8s7.2 2.4 7.5 6.8"/></svg></span><span><strong>Participant</strong><small>Browse and join events</small></span><span class="v1-chevron" aria-hidden="true">›</span></button>
+      </div>
+    </aside>
+  </div>
+</main>
+<div id="v1ForgotModal" class="v1-forgot-overlay" role="presentation" hidden>
+  <section class="v1-forgot-card" role="dialog" aria-modal="true" aria-labelledby="v1ForgotTitle">
+    <button type="button" id="v1ForgotClose" class="v1-forgot-close" aria-label="Close password recovery">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5 19 19M19 5 5 19"/></svg>
+    </button>
+    <h2 id="v1ForgotTitle">Reset your password</h2>
+    <p class="v1-forgot-description">Enter the email address associated with your account.</p>
+    <div id="v1ForgotError" class="v1-alert is-error" role="alert" hidden></div>
+    <div id="v1ForgotEmailStep">
+      <form id="v1ForgotEmailForm" th:action="@{/forgot-password/check}" method="post">
+        <label for="v1ForgotEmail">Email address</label>
+        <div class="v1-auth-input"><input id="v1ForgotEmail" name="email" type="email" placeholder="you@example.com" autocomplete="email" required th:value="${forgotEmail}"></div>
+        <button type="submit" class="v1-gold-button v1-auth-submit">Check Email</button>
+      </form>
+    </div>
+    <div id="v1ForgotResetStep" hidden>
+      <form id="v1ForgotResetForm" th:action="@{/forgot-password/reset}" method="post">
+        <input id="v1ForgotResetEmail" name="email" type="hidden" th:value="${forgotEmail}">
+        <label for="v1ForgotNewPassword">New password</label>
+        <div class="v1-auth-input"><input id="v1ForgotNewPassword" name="newPassword" type="password" autocomplete="new-password" required minlength="8" placeholder="Create a strong password"></div>
+        <p class="v1-password-help">8+ characters, uppercase, lowercase, number and symbol.</p>
+        <label for="v1ForgotConfirmPassword">Confirm new password</label>
+        <div class="v1-auth-input"><input id="v1ForgotConfirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required minlength="8" placeholder="Repeat your new password"></div>
+        <p id="v1ForgotValidation" class="v1-inline-error" role="alert" hidden></p>
+        <button type="submit" class="v1-gold-button v1-auth-submit">Update Password</button>
+        <button type="button" id="v1ForgotBack" class="v1-forgot-back">Use a different email</button>
+      </form>
+    </div>
+  </section>
+</div>
+<script th:inline="javascript">window.eventflowV1Tab = /*[[${activeTab}]]*/ null;</script>
+<script th:src="@{/js/auth-v1.js(v=20261011registerreadable)}" src="/js/auth-v1.js?v=20261011registerreadable"></script>
+</body></html>

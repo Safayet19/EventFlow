@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#ffffff">
+    <title>EventFlow | Contact Support</title>
+    <link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png(v='20260923couponcontact1')}" href="/images/eventflow-favicon.png?v=20260923couponcontact1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css(v=20261011contactalign2)}" href="/css/site.css?v=20261011clean">
+    <link rel="stylesheet" th:href="@{/css/v1-public.css(v=20261011full)}" href="/css/v1-public.css?v=20261011full">
+    <link rel="stylesheet" th:href="@{/css/workspace-final.css(v=20261011full)}" href="/css/workspace-final.css?v=20261011full">
+</head>
+<body th:class="${signedIn} ? 'ef-workspace contact-dashboard-body' : 'v1-page ef-contact contact-public-body'">
+<th:block th:if="${!signedIn}"><div th:replace="~{fragments :: v1Nav('contact')}"></div></th:block>
+
+<th:block th:if="${signedIn}"><div th:replace="~{fragments :: topbar}"></div></th:block>
+<div th:class="${signedIn} ? 'app-shell' : 'contact-public-shell'">
+    <th:block th:if="${signedIn}"><div th:replace="~{fragments :: sidebar('contact')}"></div></th:block>
+    <main th:class="${signedIn} ? 'app-main contact-dashboard-main' : 'contact-public-main'">
+    <section class="contact-hero-copy">
+        <span class="section-kicker">EVENTFLOW SUPPORT</span>
+        <h1>How can we help?</h1>
+        <p>Send a request to EventFlow support for event, registration, organizer or technical assistance.</p>
+    </section>
+
+    <div class="contact-layout">
+        <section class="contact-info-card">
+            <div class="contact-info-top">
+                <span class="contact-info-icon"><i class="bi bi-headset"></i></span>
+                <div><span class="section-kicker">CONTACT INFORMATION</span><h2>Reach EventFlow</h2><p>Use the form or contact the support representative directly.</p></div>
+            </div>
+
+            <div class="contact-person-card">
+                <div class="contact-person-avatar">SU</div>
+                <div><small>Support Representative</small><strong>Safayet Ullah</strong></div>
+            </div>
+
+            <div class="contact-channel-list">
+                <a class="contact-channel" href="mailto:safayetullah019@gmail.com">
+                    <span class="gmail-contact-mark"><img src="/images/gmail-logo.svg" th:src="@{/images/gmail-logo.svg}" alt="" width="26" height="26"></span>
+                    <div><small>Email</small><strong>safayetullah019@gmail.com</strong></div>
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+                <a class="contact-channel whatsapp" href="https://wa.me/8801837945824" target="_blank" rel="noopener">
+                    <span><i class="bi bi-whatsapp"></i></span>
+                    <div><small>WhatsApp</small><strong>+880 1837-945824</strong></div>
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+                <div class="contact-channel static">
+                    <span><i class="bi bi-geo-alt-fill"></i></span>
+                    <div><small>Address</small><strong>Southeast University, Dhaka</strong></div>
+                </div>
+            </div>
+
+            <div class="contact-security-note"><i class="bi bi-shield-check"></i><span>Your request is stored securely and is visible only to EventFlow administrators.</span></div>
+        </section>
+
+        <section class="contact-form-card">
+            <div class="contact-form-heading"><span class="section-kicker">SEND A REQUEST</span><h2>Tell us what happened</h2><p>Provide enough detail so the support team can understand the issue clearly.</p></div>
+
+            <div class="contact-form-alert success" th:if="${contactSuccess}"><i class="bi bi-check-circle-fill"></i><span th:text="${contactSuccess}">Message sent.</span></div>
+            <div class="contact-form-alert error" th:if="${contactError}"><i class="bi bi-exclamation-circle-fill"></i><span th:text="${contactError}">Error</span></div>
+
+            <form class="contact-form" th:action="@{/contact}" method="post" data-loading>
+                <div class="contact-form-grid">
+                    <div class="field-group"><label for="contactName">Full Name</label><input id="contactName" name="fullName" type="text" minlength="3" maxlength="80" required placeholder="Your full name" th:value="${contactForm != null ? contactForm.fullName : (currentUser != null ? currentUser.fullName : '')}"></div>
+                    <div class="field-group"><label for="contactEmail">Email</label><input id="contactEmail" name="email" type="email" maxlength="120" required placeholder="you@example.com" th:value="${contactForm != null ? contactForm.email : (currentUser != null ? currentUser.email : '')}"></div>
+                    <div class="field-group"><label for="contactPhone">Phone / WhatsApp <span class="optional-label">Optional</span></label><input id="contactPhone" name="phone" type="text" maxlength="24" placeholder="+880..." th:value="${contactForm != null ? contactForm.phone : ''}"></div>
+                    <div class="field-group"><label for="contactType">Request Type</label><select id="contactType" name="requestType" required><option value="">Choose request type</option><option value="GENERAL_INQUIRY" th:selected="${contactForm != null and contactForm.requestType == 'GENERAL_INQUIRY'}">General Inquiry</option><option value="EVENT_SUPPORT" th:selected="${contactForm != null and contactForm.requestType == 'EVENT_SUPPORT'}">Event Support</option><option value="REGISTRATION_ISSUE" th:selected="${contactForm != null and contactForm.requestType == 'REGISTRATION_ISSUE'}">Registration Issue</option><option value="COUPON_PRICING_ISSUE" th:selected="${contactForm != null and contactForm.requestType == 'COUPON_PRICING_ISSUE'}">Coupon / Pricing Issue</option><option value="ORGANIZER_SUPPORT" th:selected="${contactForm != null and contactForm.requestType == 'ORGANIZER_SUPPORT'}">Organizer Support</option><option value="TECHNICAL_PROBLEM" th:selected="${contactForm != null and contactForm.requestType == 'TECHNICAL_PROBLEM'}">Technical Problem</option><option value="OTHER" th:selected="${contactForm != null and contactForm.requestType == 'OTHER'}">Other</option></select></div>
+                    <div class="field-group full-width"><label for="contactSubject">Subject</label><input id="contactSubject" name="subject" type="text" minlength="3" maxlength="120" required placeholder="Briefly describe the issue" th:value="${contactForm != null ? contactForm.subject : ''}"></div>
+                    <div class="field-group full-width"><div class="field-label-row"><label for="contactMessage">Message</label><small id="contactMessageCount">0 / 1500</small></div><textarea id="contactMessage" name="message" rows="7" minlength="10" maxlength="1500" required placeholder="Describe your request in detail..." th:text="${contactForm != null ? contactForm.message : ''}"></textarea></div>
+                </div>
+                <button class="primary-button contact-submit-button" type="submit"><i class="bi bi-send"></i>Send Request</button>
+            </form>
+        </section>
+    </div>
+</main>
+</div>
+<th:block th:if="${signedIn}"><div th:replace="~{fragments :: toasts}"></div></th:block>
+<script th:src="@{/js/site.js(v='20260923couponcontact1')}" src="/js/site.js?v=20260923couponcontact1"></script>
+
+<script th:src="@{/js/workspace-final.js(v=20261011clean)}" src="/js/workspace-final.js?v=20261011clean" defer></script>
+</body>
+</html>

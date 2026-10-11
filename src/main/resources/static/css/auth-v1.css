@@ -1,0 +1,272 @@
+/* V1 auth: faithful to approved spacious, three-part light login screenshot. */
+.v1-auth-page {min-height:100vh}
+.v1-auth-scene {min-height:calc(100vh - 76px);position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;background:linear-gradient(90deg,rgba(241,246,255,.75) 0%,rgba(241,247,255,.20) 29%,rgba(247,249,253,.68) 52%,#f9fafc 80%,#f9fafc 100%),url('/images/home-conference-hero.webp') center center / cover no-repeat}
+.v1-auth-main {min-height:665px;padding-top:65px;padding-bottom:66px;display:grid;grid-template-columns:minmax(315px,1.13fr) minmax(360px,.98fr) minmax(250px,.75fr);gap:25px;align-items:center}
+.v1-auth-main.no-demo {grid-template-columns:minmax(320px,1.2fr) minmax(390px,.9fr)}
+.v1-auth-hero {align-self:center;padding:0 10px 0 0;max-width:480px}
+.v1-auth-hero h1 {font-family:Georgia,'Times New Roman',serif;font-size:clamp(53px,4.1vw,73px);letter-spacing:-.062em;line-height:1.02;margin:16px 0;color:#091331;font-weight:700}
+.v1-auth-hero h1 em {font-style:normal;color:#d6980c}
+.v1-auth-hero>p:not(.v1-eyebrow) {max-width:340px;color:#384b69;font-size:18px;line-height:1.48;margin:0}
+.v1-auth-panel,.v1-quick-panel {border:1px solid #e8ebf1;border-radius:15px;background:rgba(255,255,255,.96);box-shadow:0 8px 27px rgba(22,37,67,.07)}
+.v1-auth-panel {min-width:0;padding:29px 30px 30px}
+.v1-auth-tabs {background:#f5f7fa;border-radius:10px;display:grid;grid-template-columns:1fr 1fr;gap:0;padding:3px;margin-bottom:28px}
+.v1-auth-tabs button {height:45px;border:none;border-radius:9px;background:transparent;font-size:15px;font-weight:710;color:#667187}
+.v1-auth-tabs button.is-active {color:#0a1530;background:linear-gradient(110deg,#ffdb81,#efae18);box-shadow:0 1px 4px rgba(202,140,10,.1)}
+.v1-auth-panel label,.v1-recovery-card label {font-size:13px;font-weight:710;color:#121b32;display:block;margin:17px 0 7px}
+.v1-auth-input {height:47px;background:#fff;border:1px solid #dce2ec;border-radius:9px;display:flex;gap:12px;align-items:center;padding:0 13px}
+.v1-auth-input:focus-within {border-color:#dca621;box-shadow:0 0 0 3px rgba(219,160,18,.13)}
+.v1-auth-input svg {height:18px;width:18px;flex:none;fill:none;stroke:#27344f;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.v1-auth-input input,.v1-auth-input select {border:0!important;background:transparent!important;outline:0!important;box-shadow:none!important;width:100%;min-width:0;height:100%;color:#11203d;font-size:14px}
+.v1-auth-input input::placeholder {color:#7d8aa1}
+.v1-auth-input select {cursor:pointer}
+.v1-auth-form-row {margin:19px 0 20px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.v1-auth-form-row .v1-remember {margin:0;display:flex;align-items:center;gap:9px;color:#39465f;font-size:12px;font-weight:500;white-space:nowrap}
+.v1-remember input {width:16px;height:16px;accent-color:#d79c12}
+.v1-auth-form-row>a {color:#bf8008;font-size:13px;font-weight:680}
+.v1-auth-submit {width:100%;min-height:47px;border-radius:10px;font-size:15px}
+.v1-password-toggle {border:0;background:transparent;color:#69788d;font-size:12px;min-width:36px}
+.v1-password-help {font-size:11px;line-height:1.4;color:#77849c;margin:6px 0 0}
+.v1-inline-error {color:#c13c39;min-height:0;font-size:12px;margin:7px 0}
+.v1-alert {padding:12px 13px;border-radius:8px;font-size:12px;line-height:1.5;margin:12px 0}
+.v1-alert.is-error {background:#fff1ef;color:#993c34;border:1px solid #f7c9c6}
+.v1-alert.is-success {background:#effaf4;color:#216e4e;border:1px solid #caebda}
+/* Keep Quick Access exactly as requested: three compact rows, no credentials. */
+.v1-quick-panel {padding:25px 22px;background:rgba(255,251,240,.92)}
+.v1-quick-panel h2 {font-family:Georgia,'Times New Roman',serif;letter-spacing:-.034em;font-size:27px;color:#0b1530;margin:0 0 4px}
+.v1-quick-help {color:#758096;font-size:11px;margin:0 0 17px}
+.v1-quick-role {margin:0 0 11px}
+.v1-quick-role:last-child {margin-bottom:0}
+.v1-quick-role button {display:flex;align-items:center;gap:13px;min-height:75px;width:100%;border:1px solid #e9eaf0;background:#fff;border-radius:11px;padding:12px;text-align:left;transition:background .18s ease,transform .18s ease}
+.v1-quick-role button:hover {background:#fff8e8;transform:translateY(-1px);border-color:#e7cb92}
+.v1-role-icon {flex:0 0 42px;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:800}
+.v1-role-icon.admin {background:#ffdee3;color:#b63450}
+.v1-role-icon.organizer {background:#daf3e3;color:#23734a}
+.v1-role-icon.participant {background:#dceafe;color:#2e65ad}
+.v1-quick-role button>span:nth-child(2) {flex:1;min-width:0}
+.v1-quick-role strong {display:block;color:#152039;font-size:15px;font-weight:770}
+.v1-quick-role small {display:block;color:#627089;font-size:11px;margin-top:2px;line-height:1.35}
+.v1-chevron {font-size:29px;color:#967223;line-height:1}
+/* Separate, secure recovery screens – not an unsafe password field inside Login. */
+.v1-recovery-scene {min-height:calc(100vh - 76px);display:flex;justify-content:center;align-items:center;padding:50px 20px;background:linear-gradient(90deg,rgba(245,248,255,.92),rgba(251,252,255,.95)),url('/images/home-conference-hero.webp') center/cover no-repeat}
+.v1-recovery-card {width:min(100%,465px);padding:33px;background:#fff;border:1px solid #e5eaf1;border-radius:15px;box-shadow:0 8px 36px rgba(19,35,63,.06)}
+.v1-recovery-card .v1-back-link {margin-bottom:20px}
+.v1-recovery-card h1 {font-family:Georgia,'Times New Roman',serif;font-size:34px;line-height:1.2;letter-spacing:-.04em;margin:11px 0}
+.v1-recovery-card>p:not(.v1-eyebrow) {color:#5a6b81;line-height:1.6;font-size:13px}
+.v1-recovery-card .v1-auth-submit {margin-top:20px}
+@media(max-width:1260px) {
+.v1-auth-main {gap:17px;grid-template-columns:minmax(215px,1fr) minmax(345px,1.12fr) minmax(245px,.87fr)}
+.v1-auth-panel {padding:23px}
+.v1-auth-hero h1 {font-size:clamp(49px,5vw,62px)}
+.v1-quick-panel {padding:22px 16px}
+}
+@media(max-width:970px) {
+.v1-auth-main,.v1-auth-main.no-demo {grid-template-columns:1fr minmax(310px,1fr);gap:20px;min-height:auto;padding:43px 0}
+.v1-auth-hero {grid-column:1;grid-row:1}
+.v1-auth-panel {grid-column:2;grid-row:1/3}
+.v1-quick-panel {grid-column:1;grid-row:2}
+.v1-quick-role button {min-height:58px}
+.v1-auth-scene {align-items:start;background-position:center}
+}
+@media(max-width:640px) {
+.v1-auth-scene {background:linear-gradient(160deg,#f1f5ff,#fff 58%)}
+.v1-auth-main,.v1-auth-main.no-demo {display:flex;flex-direction:column;padding:23px 0 36px;gap:20px;align-items:stretch}
+.v1-auth-hero {padding:4px 2px;max-width:none}
+.v1-auth-hero h1 {font-size:42px;margin:8px 0 5px}
+.v1-auth-hero h1 br {display:none}
+.v1-auth-hero>p:not(.v1-eyebrow) {font-size:13px;max-width:440px}
+.v1-auth-panel {padding:22px 18px}
+.v1-auth-tabs {margin-bottom:17px}
+.v1-quick-panel {padding:18px}
+.v1-quick-panel h2 {font-size:23px}
+.v1-recovery-card {padding:24px 18px}
+}
+
+
+/* Approved-login fidelity repair: the conference WebP already includes its own
+   soft white fade. A second opaque gradient was washing out the whole scene. */
+@media (min-width: 971px) {
+  .v1-auth-scene {
+    min-height: calc(100vh - 76px);
+    background-image: linear-gradient(90deg, transparent 0%, transparent 61%, rgba(250,251,253,.22) 83%, rgba(250,251,253,.38) 100%), url('/images/home-conference-hero.webp');
+    background-position: center center;
+    background-size: cover;
+  }
+  .v1-auth-main {
+    min-height: 550px;
+    padding-top: 45px;
+    padding-bottom: 45px;
+    grid-template-columns: minmax(330px, 1.24fr) minmax(340px, .87fr) minmax(260px, .72fr);
+    gap: clamp(15px, 1.7vw, 24px);
+  }
+  .v1-auth-main.no-demo {grid-template-columns:minmax(330px,1.3fr) minmax(350px,.96fr);}
+  .v1-auth-panel {padding:23px 24px 24px;}
+  .v1-quick-panel {padding:23px 20px;}
+  .v1-auth-hero {padding:0;max-width:460px;}
+  .v1-auth-hero h1 {font-size:clamp(48px,4.4vw,66px);letter-spacing:-.035em;line-height:1.04;margin:12px 0;}
+  .v1-auth-hero>p:not(.v1-eyebrow) {max-width:365px;font-size:17px;}
+  .v1-auth-tabs {margin-bottom:18px;}
+  .v1-auth-tabs button {height:43px;}
+  .v1-auth-panel label {margin:13px 0 6px;}
+  .v1-auth-input {height:44px;}
+  .v1-auth-form-row {margin:17px 0;}
+  .v1-auth-submit {min-height:44px;}
+  .v1-quick-panel h2 {margin-bottom:17px;font-size:25px;}
+  .v1-quick-role button {min-height:67px;padding:10px 11px;}
+  .v1-quick-role {margin-bottom:10px;}
+}
+/* Use the homepage's exact type stacks rather than mixing desktop fallback fonts. */
+.v1-auth-page, .v1-auth-page button, .v1-auth-page input, .v1-auth-page select {font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;}
+.v1-auth-hero h1,.v1-quick-panel h2 {font-family:Georgia,'Times New Roman',serif;}
+.v1-password-toggle {flex:none;display:inline-grid;place-items:center;width:34px;height:34px;min-width:34px;color:#283955;border-radius:6px;padding:5px;transition:color .17s,background .17s;}
+.v1-password-toggle:hover {background:#fff3d9;color:#b27c00;}
+.v1-password-toggle svg {width:21px;height:21px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.v1-password-toggle .v1-eye-closed {display:none;}
+.v1-password-toggle.is-visible .v1-eye-open {display:none;}
+.v1-password-toggle.is-visible .v1-eye-closed {display:block;}
+.v1-quick-role button.is-selected {background:#fff8e6;border-color:#dda934;box-shadow:0 0 0 2px rgba(214,162,38,.15);}
+.v1-quick-role button:focus-visible {outline:3px solid #dbb34f;outline-offset:2px;}
+.v1-quick-role strong {font-size:14px;font-weight:700;}
+.v1-quick-role small {font-size:11px;}
+.v1-demo-selection {margin:10px 0 0;color:#805d0a;font-size:12px;font-weight:600;line-height:1.35;}
+@media (min-width: 971px) and (max-width: 1150px) {
+  .v1-auth-main {grid-template-columns:minmax(240px,1fr) minmax(312px,1.04fr) minmax(225px,.75fr);gap:14px;}
+  .v1-auth-panel {padding:20px;}
+  .v1-quick-panel {padding:20px 15px;}
+}
+@media (min-width:641px) and (max-width:970px) {
+  .v1-auth-scene {background-image:linear-gradient(90deg,rgba(247,249,255,.25),rgba(251,252,255,.33)),url('/images/home-conference-hero.webp');}
+  .v1-auth-main {grid-template-columns:minmax(0,1fr) minmax(300px,1fr);}
+  .v1-auth-panel {padding:23px;}
+  .v1-quick-panel {padding:18px;}
+}
+@media (max-width:640px) {
+  .v1-auth-scene {background:#f8f9fc;}
+  .v1-auth-main {gap:16px;}
+  .v1-auth-panel {padding:20px 18px;}
+  .v1-quick-panel {padding:20px 17px;}
+  .v1-quick-panel h2 {margin-bottom:13px;}
+  .v1-quick-role button {min-height:61px;}
+}
+
+/* Original two-step recovery inside the approved Login page. */
+.v1-forgot-active {overflow:hidden}
+.v1-forgot-overlay {position:fixed;inset:0;z-index:5000;display:grid;place-items:center;padding:20px;background:rgba(15,25,43,.48)}
+.v1-forgot-overlay[hidden],#v1ForgotEmailStep[hidden],#v1ForgotResetStep[hidden],#v1ForgotValidation[hidden],#v1ForgotError[hidden] {display:none!important}
+.v1-forgot-card {position:relative;width:min(100%,450px);max-height:calc(100dvh - 40px);overflow:auto;background:#fff;border:1px solid #e6e9ef;border-radius:16px;padding:29px 30px;box-shadow:0 16px 50px rgba(16,27,51,.17);color:#111b36}
+.v1-forgot-card h2 {font-family:Georgia,'Times New Roman',serif;letter-spacing:-.025em;font-size:27px;line-height:1.15;margin:1px 42px 8px 0;color:#101b3c}
+.v1-forgot-description {margin:0 0 17px;color:#5d6a80;font-size:13px;line-height:1.6}
+.v1-forgot-card label {font-size:13px;font-weight:700;color:#101b3c;display:block;margin:14px 0 8px}
+.v1-forgot-card .v1-auth-submit {margin-top:19px;width:100%}
+.v1-forgot-close {position:absolute;top:18px;right:18px;background:#f5f6f9;border:1px solid #e5e8ee;border-radius:8px;width:33px;height:33px;display:grid;place-items:center;cursor:pointer;color:#33425e}
+.v1-forgot-close svg {width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.v1-forgot-close:hover,.v1-forgot-close:focus-visible {background:#fff3d8;border-color:#e4ba55}
+.v1-forgot-back {display:block;margin:17px auto 0;padding:7px 11px;background:transparent;border:0;color:#ad7809;font-weight:650;cursor:pointer;font-size:12px}
+.v1-forgot-back:hover {text-decoration:underline}
+@media(max-width:480px) {.v1-forgot-card {padding:23px 19px}}
+
+
+/* Approved composition: left conference image, clean opaque right-side forms. */
+.v1-auth-scene {background:#f8faff!important;isolation:isolate;}
+.v1-auth-scene::before{
+  content:"";position:absolute;z-index:-1;top:0;bottom:0;left:0;width:55%;pointer-events:none;
+  background:url('/images/home-conference-hero.webp') 55% center / cover no-repeat;
+  -webkit-mask-image:linear-gradient(90deg,#000 0%,#000 70%,transparent 100%);
+  mask-image:linear-gradient(90deg,#000 0%,#000 70%,transparent 100%);
+}
+.v1-auth-panel {background:#fff!important;border-color:#e6eaf1;backdrop-filter:none;}
+.v1-quick-panel {background:#fffaf0!important;border-color:#efe7d9;backdrop-filter:none;}
+.v1-auth-main {position:relative;z-index:1;}
+/* The approved left-side image and panel alignment stay unchanged on Register. */
+.v1-recovery-scene {background:#f8faff!important;}
+.v1-auth-page :is(input,select):focus-visible {outline:0!important;box-shadow:none!important;}
+.v1-auth-page .v1-auth-input:focus-within {border-color:#daa226!important;box-shadow:0 0 0 3px rgba(220,165,35,.17)!important;}
+@media(max-width:970px){
+  .v1-auth-scene::before {width:50%;background-position:55% center;opacity:.62;}
+}
+@media(max-width:640px){
+  .v1-auth-scene::before {display:none;}
+  .v1-auth-main {gap:14px;}
+  .v1-auth-panel{order:0;}
+  .v1-quick-panel{order:1;}
+  .v1-auth-hero{order:2;}
+}
+
+/* Shared Login/Register composition: only form contents change between tabs. */
+@media(min-width:971px){
+  .v1-auth-main {align-items:start;min-height:645px;padding-top:65px;padding-bottom:65px;}
+  .v1-auth-hero {align-self:start;margin-top:76px;}
+  .v1-auth-panel,.v1-quick-panel {align-self:start;}
+  .v1-auth-scene::before {width:53%;}
+}
+@media(min-width:641px) and (max-width:970px){
+  .v1-auth-main {align-items:start;}
+  .v1-auth-hero,.v1-quick-panel {align-self:start;}
+}
+.v1-auth-panel,.v1-quick-panel {backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+.v1-auth-panel :is(input,select),.v1-quick-panel :is(button,small,strong){filter:none;text-shadow:none;}
+.v1-auth-panel :is(input,select):focus-visible {outline:0!important;box-shadow:none!important;}
+.v1-auth-panel .v1-auth-input:focus-within {border-color:#d3a128;box-shadow:0 0 0 3px rgba(211,161,40,.16);}
+@media(prefers-reduced-motion:reduce){.v1-quick-role button{transition:none!important}}
+
+/* Final approved auth composition: photograph confined to the left; solid clean right. */
+.v1-auth-scene {background:#f8f9fc!important;position:relative;isolation:isolate;}
+.v1-auth-scene::before {
+  content:"";position:absolute;inset:0 auto 0 0;width:57%;pointer-events:none;z-index:-1;
+  background:linear-gradient(90deg,rgba(247,249,254,.24),rgba(247,249,254,.02) 40%,rgba(247,249,254,.14) 68%,#f8f9fc 100%),
+    url('/images/home-conference-hero.webp') center/cover no-repeat;
+}
+.v1-auth-main {position:relative;z-index:1;max-width:1650px;align-items:center;}
+/* Keep the photo visible while giving Welcome/Create Your Account readable contrast. */
+.v1-auth-hero {position:relative;isolation:isolate;padding:22px 22px 26px 24px;margin-left:-24px;max-width:520px;}
+.v1-auth-hero::before {
+  content:"";position:absolute;inset:-75px -65px -85px -65px;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse closest-side at 48% 50%,rgba(247,249,254,.94) 0%,rgba(247,249,254,.82) 42%,rgba(247,249,254,.40) 70%,transparent 100%);
+}
+.v1-auth-hero .v1-eyebrow {color:#12284a;font-weight:800;}
+.v1-auth-hero h1 {color:#0b1835;}
+.v1-auth-hero h1 em {color:#aa7100;}
+.v1-auth-hero>p:not(.v1-eyebrow) {color:#1d3454;font-weight:550;max-width:390px;}
+
+.v1-auth-panel,.v1-quick-panel {background:#fff!important;backdrop-filter:none!important;}
+.v1-quick-panel {background:#fffaf0!important;}
+.v1-auth-panel {padding:28px 29px 29px!important;}
+.v1-auth-input {height:49px!important;}
+.v1-auth-tabs button {height:46px!important;}
+.v1-auth-submit {min-height:49px!important;font-weight:700!important;}
+.v1-quick-role button {min-height:73px!important;padding:12px!important;}
+.v1-auth-main {grid-template-columns:minmax(275px,1.12fr) minmax(355px,.95fr) minmax(262px,.76fr)!important;gap:clamp(16px,1.8vw,27px)!important;}
+.v1-register-open .v1-auth-main {align-items:start!important;}
+.v1-register-open .v1-auth-hero {align-self:start;margin-top:clamp(95px,11vh,138px); }
+.v1-register-open .v1-quick-panel {align-self:start;margin-top:4px;}
+.v1-strength {margin:10px 0 12px;}
+.v1-strength-line {display:flex;justify-content:space-between;align-items:center;color:#566984;font-size:12px;}
+.v1-strength-line strong {color:#283f5b;font-weight:700;}
+.v1-strength-track {height:6px;background:#ebeff5;border-radius:99px;overflow:hidden;margin:6px 0 9px;}
+.v1-strength-track span {display:block;height:100%;width:0%;background:#e24b4b;border-radius:99px;transition:width .2s ease,background-color .2s ease;}
+.v1-strength-track span[data-level="weak"] {background:#d45c51;}
+.v1-strength-track span[data-level="medium"] {background:#d9a014;}
+.v1-strength-track span[data-level="strong"] {background:#1d9660;}
+.v1-password-rules {display:flex;flex-wrap:wrap;gap:5px;}
+.v1-password-rules span {border:1px solid #e1e7ef;border-radius:7px;padding:3px 7px;background:#f9fafc;color:#6b7891;font-size:10px;transition:background .15s,color .15s;}
+.v1-password-rules span.is-met {background:#e7f7ed;color:#137c4b;border-color:#bedfc9;}
+.v1-match-status {min-height:12px;color:#a05243;font-size:11px;margin:8px 0 0;}
+.v1-match-status[data-valid="true"] {color:#167849;}
+@media (max-width:1100px) and (min-width:971px) {
+ .v1-auth-main {grid-template-columns:minmax(210px,.8fr) minmax(325px,1fr) minmax(240px,.77fr)!important;gap:14px!important;}
+ .v1-auth-panel {padding:22px!important;}
+}
+@media (max-width:970px) {
+ .v1-auth-main,.v1-auth-main.no-demo {grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:16px!important;}
+ .v1-auth-scene::before {width:55%;}
+ .v1-register-open .v1-quick-panel {margin-top:0;}
+ .v1-register-open .v1-auth-hero {margin-top:0;}
+}
+@media (max-width:640px) {
+ .v1-auth-scene::before {display:none;}
+ .v1-auth-main,.v1-auth-main.no-demo {display:flex!important;flex-direction:column;gap:16px!important;align-items:stretch!important;}
+ .v1-auth-panel {padding:19px!important;}
+ .v1-auth-hero h1 {font-size:43px;}
+ .v1-password-rules span {font-size:10px;}
+ .v1-auth-hero {margin-left:0;padding:4px 2px;}
+ .v1-auth-hero::before {display:none;}
+}

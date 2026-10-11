@@ -1,0 +1,852 @@
+/* EventFlow unified workspace, 2026-10-11.
+   The approved Home (home.html/home-v2.css) is intentionally not touched.
+   Existing Thymeleaf IDs/classes/routes remain operational. */
+body.ef-workspace,body.ef-contact,body.ef-error {
+  --bg:#f7f8fc;--panel:#fff;--panel-2:#fff;--panel-3:#f8fafc;
+  --yellow:#dda10c;--yellow-soft:#fff3d7;--yellow-line:#e9c87e;
+  --text:#0b1534;--muted:#64718a;--line:#e4e9f1;
+  --success:#138655;--danger:#bd3b4c;--warning:#b87900;
+  --sidebar:252px;--topbar:76px;--radius:12px;
+  --shadow:0 9px 25px rgba(18,32,55,.07);
+  margin:0;min-height:100vh;background:#f7f8fc;color:#0b1534;
+  font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+  color-scheme:light;overflow-x:hidden;
+}
+.ef-workspace *, .ef-contact *, .ef-error * {box-sizing:border-box}
+.ef-workspace a, .ef-contact a {text-underline-offset:3px}
+.ef-workspace a:focus-visible,.ef-workspace button:focus-visible,.ef-workspace input:focus-visible,
+.ef-workspace select:focus-visible,.ef-workspace textarea:focus-visible,
+.ef-contact a:focus-visible,.ef-contact button:focus-visible,.ef-contact input:focus-visible,
+.ef-contact select:focus-visible,.ef-contact textarea:focus-visible{
+  outline:3px solid #e4b84d;outline-offset:3px;
+}
+.ef-workspace .ef-icon,.ef-contact .ef-icon,.ef-error .ef-icon{display:inline-block;vertical-align:-.12em;width:1.15em;height:1.15em;min-width:1em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.ef-workspace .topbar,.ef-contact .topbar{
+  min-height:76px;background:#fff;border-bottom:1px solid #e6ebf2;
+  box-shadow:0 2px 10px rgba(11,21,52,.025);backdrop-filter:none;
+}
+.ef-workspace .topbar-inner,.ef-contact .topbar-inner{min-height:76px;gap:18px;padding:0 clamp(16px,3vw,48px)}
+.ef-workspace .brand,.ef-contact .brand{display:inline-flex;align-items:center;max-width:225px;padding:0;line-height:1}
+.ef-workspace .brand-logo,.ef-contact .brand-logo{display:block;object-fit:contain;width:213px;height:auto;max-height:64px}
+.ef-workspace .top-icon-button,.ef-workspace .mobile-menu-button,.ef-contact .top-icon-button,.ef-contact .mobile-menu-button{
+  border:1px solid transparent;background:#fff;color:#0b1534;border-radius:10px;
+  width:43px;height:43px;display:grid;place-items:center;transition:background .18s,border-color .18s,transform .18s;
+}
+.ef-workspace .mobile-menu-button,.ef-contact .mobile-menu-button{display:none}
+.ef-workspace .top-icon-button:hover,.ef-workspace .mobile-menu-button:hover,
+.ef-contact .top-icon-button:hover{background:#fff5df;border-color:#f0dbae;transform:translateY(-1px)}
+.ef-workspace .notification-badge,.ef-contact .notification-badge{
+  background:#e8ad12;color:#07142f;border:2px solid #fff;
+  font-size:11px;top:-5px;right:-5px;min-width:21px;height:21px
+}
+.ef-workspace .user-chip-link,.ef-contact .user-chip-link{
+  color:#0b1534;display:flex;align-items:center;gap:10px;
+  padding:5px 10px;border:1px solid transparent;border-radius:12px;text-decoration:none;
+}
+.ef-workspace .user-chip-link:hover,.ef-contact .user-chip-link:hover{background:#f5f7fb;border-color:#e6e9ef}
+.ef-workspace .avatar-image,.ef-contact .avatar-image{width:43px;height:43px;object-fit:cover;border:2px solid #f2f2f2}
+.ef-workspace .user-meta strong,.ef-contact .user-meta strong{color:#0b1534;font-size:14px}
+.ef-workspace .user-meta span,.ef-contact .user-meta span{color:#67748e;font-size:11px;letter-spacing:.08em}
+.ef-workspace .notification-panel,.ef-contact .notification-panel{
+  background:#fff;border:1px solid #e3e7f0;box-shadow:0 22px 60px rgba(11,21,52,.17);
+  border-radius:14px;width:min(370px,calc(100vw - 24px));top:54px
+}
+.ef-workspace .notification-preview,.ef-contact .notification-preview{border-bottom:1px solid #edf0f5}
+.ef-workspace .notification-preview:hover,.ef-contact .notification-preview:hover{background:#f6f8fd}
+.ef-workspace .notification-preview.unread,.ef-contact .notification-preview.unread{background:#fffaf0}
+.ef-workspace .notification-preview p,.ef-contact .notification-preview p{color:#0b1534}
+.ef-workspace .notification-panel-head a,.ef-contact .notification-panel-head a{color:#b17a00}
+.ef-workspace .notice-dot,.ef-contact .notice-dot{background:#abb4c5}
+.ef-workspace .notification-preview.unread .notice-dot,.ef-contact .notification-preview.unread .notice-dot{background:#daa313;box-shadow:none}
+.ef-workspace .app-sidebar,.ef-contact .app-sidebar{
+  top:76px;width:252px;padding:20px 14px 14px;
+  border-right:1px solid #e6ebf2;background:#fff;
+  box-shadow:none;display:flex;flex-direction:column;
+}
+.ef-workspace .sidebar-nav,.ef-contact .sidebar-nav{display:grid;gap:4px;overflow-y:auto;min-height:0;scrollbar-width:thin}
+.ef-workspace .sidebar-nav a,.ef-contact .sidebar-nav a{
+  color:#40516d;border-radius:10px;font-size:13.5px;font-weight:650;
+  min-height:44px;padding:0 13px;gap:11px;display:grid;grid-template-columns:21px minmax(0,1fr) auto;
+  transition:background .18s,color .18s,transform .18s;
+}
+.ef-workspace .sidebar-nav a:hover,.ef-contact .sidebar-nav a:hover{color:#956100;background:#fff8e9;transform:translateX(2px)}
+.ef-workspace .sidebar-nav a.active,.ef-contact .sidebar-nav a.active{color:#996300;background:#fff0ca;font-weight:750}
+.ef-workspace .sidebar-nav a.active:hover,.ef-contact .sidebar-nav a.active:hover{transform:none}
+.ef-workspace .sidebar-nav .ef-icon,.ef-contact .sidebar-nav .ef-icon{font-size:20px;width:20px;height:20px}
+.ef-workspace .sidebar-nav a em,.ef-contact .sidebar-nav a em{background:#e7ac0b;color:#09152e}
+.ef-workspace .sidebar-footer,.ef-contact .sidebar-footer{margin-top:auto;padding:12px 5px 0;border-top:1px solid #e7ebf2}
+.ef-workspace .sidebar-role,.ef-contact .sidebar-role{padding:0 12px 9px}
+.ef-workspace .sidebar-role span,.ef-contact .sidebar-role span{
+  font-size:10px;color:#8b96a7;letter-spacing:.12em;font-weight:750
+}
+.ef-workspace .sidebar-logout,.ef-contact .sidebar-logout{margin:0}
+.ef-workspace .sidebar-logout button,.ef-contact .sidebar-logout button{
+  display:flex;align-items:center;gap:12px;width:100%;border:1px solid transparent;
+  background:#fff;color:#40516d;font-weight:650;font-size:13.5px;
+  min-height:43px;padding:0 13px;border-radius:10px;cursor:pointer;text-align:left;
+  transition:background .18s,color .18s;
+}
+.ef-workspace .sidebar-logout button:hover,.ef-contact .sidebar-logout button:hover{background:#fff0ea;color:#ad3e34}
+.ef-workspace .app-main,.ef-contact .app-main{
+  margin-left:252px;width:calc(100% - 252px);max-width:none;
+  padding:30px clamp(20px,3vw,46px) 72px;min-width:0;
+}
+.ef-workspace .app-shell,.ef-contact .app-shell{background:#f7f8fc;min-height:calc(100vh - 76px)}
+.ef-workspace .page-heading,.ef-contact .page-heading{
+  align-items:center;gap:14px;margin-bottom:23px;
+}
+.ef-workspace .page-heading h1,.ef-contact .page-heading h1{
+  font-family:Georgia,'Times New Roman',serif;font-size:clamp(26px,2.7vw,36px);
+  letter-spacing:-.033em;color:#0b1534;line-height:1.2;margin:4px 0 5px;
+}
+.ef-workspace .page-heading p,.ef-contact .page-heading p{color:#6a7790;font-size:13.5px;line-height:1.6}
+.ef-workspace .section-kicker,.ef-workspace .role-label,.ef-contact .section-kicker{
+  color:#a97600;font-weight:750;font-size:10.5px;letter-spacing:.12em;
+}
+.ef-workspace .role-label{display:inline-block;color:#a87500;background:#fff1d1;border-radius:999px;padding:5px 13px}
+.ef-workspace h2,.ef-contact h2,.ef-workspace h3,.ef-contact h3{color:#0b1534}
+.ef-workspace .primary-button,.ef-workspace .secondary-button,.ef-workspace .danger-button,
+.ef-contact .primary-button,.ef-contact .secondary-button,.ef-contact .danger-button{
+  min-height:37px;padding:8px 14px;border-radius:9px;display:inline-flex;align-items:center;
+  justify-content:center;gap:7px;font-size:12px;font-weight:750;text-decoration:none;
+  transition:background .18s,border-color .18s,transform .18s,box-shadow .18s,color .18s;
+}
+.ef-workspace .primary-button,.ef-contact .primary-button{
+  color:#151b2a;background:linear-gradient(135deg,#ffe298,#edb32f);border:1px solid #efc663;
+}
+.ef-workspace .primary-button:hover,.ef-contact .primary-button:hover{background:#e5a515;border-color:#d29a15;box-shadow:0 5px 16px rgba(174,120,9,.16);transform:translateY(-2px)}
+.ef-workspace .secondary-button,.ef-contact .secondary-button{
+  background:#fff;color:#9b6900;border:1px solid #edd5a0;
+}
+.ef-workspace .secondary-button:hover,.ef-contact .secondary-button:hover{background:#fff8e8;color:#885800;border-color:#e2be6b;transform:translateY(-1px)}
+.ef-workspace .danger-button,.ef-contact .danger-button{background:#fff7f7;color:#b23b4a;border-color:#f3d6d9}
+.ef-workspace .danger-button:hover,.ef-contact .danger-button:hover{background:#ffe9eb;color:#9a2d3d;border-color:#ecaeb7}
+.ef-workspace .primary-button[disabled],.ef-workspace button:disabled,.ef-contact button:disabled{opacity:.55;cursor:not-allowed;transform:none}
+/* Compact role dashboards, no redundant action panel or hero image. */
+.ef-workspace .metric-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:23px}
+.ef-workspace .metric-grid.ef-participant-metrics{grid-template-columns:repeat(2,minmax(0,240px))}
+.ef-workspace .metric-card{
+  min-height:93px;padding:14px 16px;border-radius:12px;
+  border:1px solid #e4e9f1;background:#fff;box-shadow:0 4px 12px rgba(17,28,52,.025);gap:12px;
+}
+.ef-workspace .metric-icon{width:42px;height:42px;flex:0 0 42px;font-size:20px;border-radius:10px;color:#2475cb;background:#eaf2ff}
+.ef-workspace .metric-card:nth-child(2) .metric-icon{color:#13a372;background:#e4f8ef}
+.ef-workspace .metric-card:nth-child(3) .metric-icon{color:#b17b00;background:#fff5df}
+.ef-workspace .metric-card:nth-child(4) .metric-icon{color:#0d956a;background:#e4f7ef}
+.ef-workspace .metric-card span{font-size:12px;font-weight:550;color:#5d6b83;line-height:1.35}
+.ef-workspace .metric-card strong{font-size:24px;letter-spacing:-.02em;color:#0b1534;margin-top:3px}
+.ef-workspace .dashboard-content-grid,.ef-workspace .dashboard-content-grid.ef-single-column{display:grid;grid-template-columns:minmax(0,1fr)}
+.ef-workspace .surface-card,.ef-workspace .table-card,.ef-workspace .event-form-card,
+.ef-workspace .notification-page-card,.ef-workspace .registration-card,
+.ef-workspace .management-event-card,.ef-workspace .contact-info-card,
+.ef-workspace .contact-form-card,.ef-contact .contact-info-card,.ef-contact .contact-form-card{
+  border:1px solid #e2e8f0;background:#fff;border-radius:12px;
+  box-shadow:0 5px 18px rgba(18,35,69,.035);color:#0b1534;
+}
+.ef-workspace .large-surface{padding:20px 23px}
+.ef-workspace .surface-heading{align-items:center;gap:12px;margin-bottom:14px}
+.ef-workspace .surface-heading h2{
+  font-family:Georgia,'Times New Roman',serif;font-size:23px;font-weight:700;letter-spacing:-.025em;color:#0b1534
+}
+.ef-workspace .surface-heading > a{color:#ad7700;font-size:12px}
+.ef-workspace .dashboard-event-list{gap:0}
+.ef-workspace .dashboard-event-row{
+  background:#fff;border:0;border-bottom:1px solid #e7edf4;border-radius:0;
+  grid-template-columns:126px minmax(0,1fr) auto auto;gap:15px;padding:13px 1px;
+}
+.ef-workspace .dashboard-event-row:last-child{border-bottom:0;padding-bottom:1px}
+.ef-workspace .dashboard-event-row > img{width:126px;height:78px;border-radius:8px}
+.ef-workspace .dashboard-event-main strong{font-size:13.5px;white-space:normal;line-height:1.35;margin:4px 0 5px}
+.ef-workspace .dashboard-event-main > span{display:inline-flex;margin-right:12px;font-size:11.5px;gap:4px}
+.ef-workspace .dashboard-event-main > span .ef-icon{width:13px;height:13px;color:#64718a}
+.ef-workspace .dashboard-event-side{justify-items:start;align-items:center}
+.ef-workspace .dashboard-event-side small{color:#617089;font-size:11px}
+.ef-workspace .ef-event-link{
+  text-decoration:none;display:inline-flex;align-items:center;gap:5px;justify-content:center;
+  background:#fff9e9;border:1px solid #f0dcae;color:#9c6a00;
+  min-height:35px;border-radius:8px;padding:7px 11px;font-size:11px;font-weight:750;white-space:nowrap;
+  transition:background .18s,transform .18s,border-color .18s;
+}
+.ef-workspace .ef-event-link:hover{background:#ffe9b1;border-color:#e9bf5f;transform:translateY(-1px)}
+.ef-workspace .status-badge{font-size:10px;letter-spacing:.03em;min-height:24px;padding:4px 8px;color:#956700;background:#fff4dd;border:1px solid #f5dda2}
+.ef-workspace .status-badge.success-status,.ef-workspace .status-badge:where(:not(.danger-status)){border-radius:999px}
+.ef-workspace .status-badge.success-status{color:#138153;background:#e5f8ef;border-color:#cbf0dd}
+.ef-workspace .status-badge.danger-status{color:#b23b4a;background:#fff0f1;border-color:#f6d8dc}
+.ef-workspace .clean-empty{padding:32px 18px}
+.ef-workspace .clean-empty h3,.ef-workspace .large-empty h2{color:#0b1534}
+.ef-workspace .large-empty{background:#fff;border:1px dashed #d7dfe9;padding:40px 20px}
+.ef-workspace .large-empty p{color:#687790}
+/* Analytics: retain all chart data and labels; restyle only. */
+.ef-workspace .analytics-section{margin:0 0 22px}
+.ef-workspace .analytics-heading h2{font-family:Georgia,'Times New Roman',serif;color:#0b1534}
+.ef-workspace .analytics-heading p{color:#6a7790}
+.ef-workspace .analytics-kpi-grid{gap:12px}
+.ef-workspace .analytics-kpi,.ef-workspace .analytics-chart-card{
+  background:#fff!important;border:1px solid #e2e8f0!important;box-shadow:none!important;border-radius:12px!important;
+}
+.ef-workspace .analytics-kpi strong,.ef-workspace .analytics-chart-card h3,.ef-workspace .analytics-card-head h3{color:#0b1534!important}
+.ef-workspace .analytics-kpi span,.ef-workspace .analytics-kpi small,.ef-workspace .analytics-card-head>div>span{color:#66748b!important}
+.ef-workspace .analytics-card-head .ef-icon{color:#bf8a0f}
+.ef-workspace .analytics-rating-bars>div>div{background:#eef1f7}
+/* General management tables, data panels, tabs. */
+.ef-workspace .table-card{overflow:hidden}
+.ef-workspace .table-toolbar{background:#fff;border-bottom:1px solid #e4e9f1;min-height:63px;gap:10px;padding:12px 16px;flex-wrap:wrap}
+.ef-workspace .table-search,.ef-workspace .filter-search,.ef-workspace .filter-select,
+.ef-workspace .table-filter,.ef-workspace .toolbar-select{
+  background:#fff!important;color:#0b1534;border:1px solid #dce3ed!important;border-radius:9px;
+}
+.ef-workspace .table-search{min-height:40px}
+.ef-workspace .table-search input,.ef-workspace .filter-search input{color:#0b1534}
+.ef-workspace .table-count,.ef-workspace .registration-filter-count{color:#a57500;background:#fff5de;border:1px solid #f0daa8;border-radius:8px;font-size:11px}
+.ef-workspace .data-table-wrap{overflow-x:auto;width:100%;overscroll-behavior-inline:contain}
+.ef-workspace .data-table{min-width:720px}
+.ef-workspace .data-table th,.ef-workspace .data-table td{padding:12px 14px;border-bottom:1px solid #e9edf3}
+.ef-workspace .data-table th{background:#f8fafc!important;color:#596980;font-size:10px;font-weight:800;letter-spacing:.055em}
+.ef-workspace .data-table td{color:#25324a;font-size:12px}
+.ef-workspace .data-table tbody tr:hover td{background:#fff9ed!important}
+.ef-workspace .data-table .table-user strong{color:#0b1534}
+.ef-workspace .data-table .table-user small{color:#6b778c}
+.ef-workspace .role-chip,.ef-workspace .protected-chip{color:#956800;background:#fff3d6}
+.ef-workspace .small-action-button{background:#fff;border:1px solid #dfe6ef;color:#4a5e7e;border-radius:8px;min-width:32px;min-height:32px;transition:background .16s,transform .16s}
+.ef-workspace .small-action-button:hover{background:#fff1d3;color:#a77303;border-color:#e9c575;transform:translateY(-1px)}
+.ef-workspace .small-action-button.danger-action{color:#bb4d56;background:#fff5f5}
+.ef-workspace .small-action-button.danger-action:hover{background:#ffe4e6}
+.ef-workspace .management-grid{gap:16px}
+.ef-workspace .management-event-card{overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s}
+.ef-workspace .management-event-card:hover{transform:translateY(-2px);border-color:#ebd8b0;box-shadow:0 12px 22px rgba(11,21,52,.065)}
+.ef-workspace .management-event-image{height:168px}
+.ef-workspace .management-event-body{padding:16px}
+.ef-workspace .management-event-body h2{font-size:17px;line-height:1.3;color:#0b1534}
+.ef-workspace .category-label{color:#a67600}
+.ef-workspace .card-actions,.ef-workspace .management-event-actions{display:flex;flex-wrap:wrap;gap:8px}
+/* Forms across Organizer/Admin/Profile/Support/Program. */
+.ef-workspace input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden]),
+.ef-workspace select,.ef-workspace textarea,
+.ef-contact input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden]),
+.ef-contact select,.ef-contact textarea{
+  color:#0b1534;background:#fff;border:1px solid #dce3ed;border-radius:9px;
+}
+.ef-workspace input::placeholder,.ef-workspace textarea::placeholder,.ef-contact input::placeholder,.ef-contact textarea::placeholder{color:#93a0b2}
+.ef-workspace input:focus,.ef-workspace textarea:focus,.ef-workspace select:focus,
+.ef-contact input:focus,.ef-contact textarea:focus,.ef-contact select:focus{border-color:#dda623;box-shadow:0 0 0 3px #f9eccc;outline:0}
+.ef-workspace label,.ef-contact label{color:#263651}
+.ef-workspace .field-error,.ef-contact .field-error{color:#b23b4a}
+.ef-workspace .event-form-card{max-width:1080px;padding:24px}
+.ef-workspace .form-step{background:#fff0c8;color:#9f6800}
+.ef-workspace .image-upload-box,.ef-workspace .upload-card{background:#f8faff;border:1px dashed #cdd8e7}
+.ef-workspace .image-upload-overlay span{color:#6b7790}
+.ef-workspace .profile-summary-card,.ef-workspace .profile-form-card{
+  background:#fff;border:1px solid #e4e9f1;box-shadow:none;border-radius:12px
+}
+.ef-workspace .profile-meta-list>div,.ef-workspace .profile-note{background:#f8fafc;border:1px solid #e3eaf3}
+.ef-workspace .profile-note p{color:#526580}
+.ef-workspace .profile-password-rules span{background:#f6f8fc;border:1px solid #e4eaf2;color:#526580}
+.ef-workspace .notification-page-item{background:#fff!important;border-bottom:1px solid #e5eaf1}
+.ef-workspace .notification-page-item:hover{background:#fff9ed!important}
+.ef-workspace .notification-page-copy p{color:#526079!important}
+.ef-workspace .notification-page-icon{color:#a46d00;background:#fff3d7}
+.ef-workspace .registration-filter-bar{
+  min-height:60px;padding:10px 12px;justify-content:flex-start;gap:10px;
+  background:#fff;border:1px solid #e3e8f1;flex-wrap:wrap;
+}
+.ef-workspace .registration-filter-bar label{margin-right:0;color:#52637f;font-size:11px}
+.ef-workspace .registration-filter-bar label.ef-filter-label{margin-left:10px}
+.ef-workspace .registration-filter-count{margin-left:auto;min-height:36px}
+.ef-workspace .registration-card{grid-template-columns:175px minmax(0,1fr);min-height:155px}
+.ef-workspace .registration-card>img{min-height:155px;height:100%;object-fit:cover}
+.ef-workspace .registration-card-body{padding:15px 17px}
+.ef-workspace .registration-card h2{font-family:Georgia,'Times New Roman',serif;font-size:20px;line-height:1.25;margin:9px 0}
+.ef-workspace .registration-card-top small,.ef-workspace .registration-meta{color:#63718b;font-size:11px}
+.ef-workspace .registration-ticket-summary{background:#f8fafc;border:1px solid #e7ebf2;border-radius:9px;padding:10px 12px}
+.ef-workspace .registration-ticket-summary strong{color:#0b1534}
+.ef-workspace .participant-feedback-panel{background:#fff9ec!important;border:1px solid #f1dfb4!important;border-radius:9px}
+.ef-workspace .feedback-modal-card,.ef-workspace .confirm-card,.ef-workspace .event-modal-card{
+  background:#fff;border:1px solid #e5eaf2;color:#0b1534;border-radius:13px;
+}
+.ef-workspace .confirm-card h3,.ef-workspace .feedback-modal-card h2{color:#0b1534}
+.ef-workspace .modal-close{color:#51617c;background:#fff;border:1px solid #e1e8f1}
+.ef-workspace .app-toast{background:#fff;color:#0b1534;border:1px solid #e3e9f3;box-shadow:0 10px 25px rgba(11,21,52,.13)}
+.ef-workspace .toast-stack{top:87px}
+.ef-workspace .contact-info-card,.ef-workspace .contact-form-card,
+.ef-contact .contact-info-card,.ef-contact .contact-form-card{padding:24px}
+.ef-workspace .contact-person-card,.ef-contact .contact-person-card,
+.ef-workspace .contact-channel,.ef-contact .contact-channel{
+  background:#f9fafc;border:1px solid #e4e9f1;color:#24334c;
+}
+.ef-workspace .contact-security-note,.ef-contact .contact-security-note{background:#eef9f2;color:#276948;border-color:#d2ebdb}
+.ef-workspace .contact-hero-copy h1,.ef-contact .contact-hero-copy h1{font:700 clamp(28px,3vw,38px) Georgia,'Times New Roman',serif;color:#0b1534}
+.ef-contact .contact-public-shell{background:#f7f8fc;padding:24px 20px 70px}
+.ef-contact .contact-public-main{max-width:1220px;margin:auto;width:100%;padding:0}
+.ef-contact .contact-layout{gap:17px}
+.ef-contact .v1-nav{background:#fff}
+/* Gallery/Program/Coupons use original input IDs and handler classes; leave scripts intact. */
+.ef-workspace .program-tab,.ef-workspace .tab-button,.ef-workspace .program-tab-button{color:#485c7a;background:#f7f9fc;border-color:#e0e7f0}
+.ef-workspace .program-tab.active,.ef-workspace .tab-button.active,.ef-workspace .program-tab-button.active{color:#a77600;background:#fff0ce;border-color:#e7cb83}
+.ef-workspace .program-card,.ef-workspace .coupon-card,.ef-workspace .program-section,
+.ef-workspace .ticket-type-card,.ef-workspace .speaker-card,.ef-workspace .sponsor-card{
+  color:#0b1534;border-color:#e1e8f0;background:#fff;
+}
+.ef-workspace .program-card:hover,.ef-workspace .coupon-card:hover{border-color:#e5c77e}
+.ef-workspace .form-control,.ef-workspace .form-select{background:#fff;color:#0b1534;border-color:#dce3ed}
+/* Error/denied states. */
+body.ef-error{display:grid;place-items:center;padding:24px}
+.ef-error .standalone-error-card{background:#fff;border:1px solid #e4eaf2;box-shadow:var(--shadow);border-radius:16px;color:#0b1534}
+.ef-error .standalone-error-card h1{font-family:Georgia,'Times New Roman',serif;color:#0b1534}
+.ef-error .standalone-error-card p{color:#64718a}
+/* Responsive: keep real data tables scrollable, never let page expand sideways. */
+@media(max-width:1280px){
+ .ef-workspace .metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ef-workspace .dashboard-event-row{grid-template-columns:105px minmax(0,1fr) auto auto}
+ .ef-workspace .dashboard-event-row>img{width:105px;height:73px}
+}
+@media(max-width:1024px){
+ .ef-workspace,.ef-contact{--sidebar:218px}
+ .ef-workspace .app-sidebar,.ef-contact .app-sidebar{width:218px}
+ .ef-workspace .app-main,.ef-contact .app-main{margin-left:218px;width:calc(100% - 218px);padding:26px 23px 60px}
+ .ef-workspace .management-grid{grid-template-columns:1fr 1fr}
+ .ef-workspace .dashboard-event-row{grid-template-columns:84px minmax(0,1fr) auto}
+ .ef-workspace .dashboard-event-row>img{width:84px;height:64px}
+ .ef-workspace .dashboard-event-side{display:none}
+}
+@media(max-width:760px){
+ .ef-workspace,.ef-contact{--topbar:64px}
+ .ef-workspace .topbar,.ef-contact .topbar{min-height:64px;position:sticky;top:0}
+ .ef-workspace .topbar-inner,.ef-contact .topbar-inner{min-height:64px;padding:0 12px;gap:8px}
+ .ef-workspace .brand-logo,.ef-contact .brand-logo{width:154px;max-height:49px}
+ .ef-workspace .mobile-menu-button,.ef-contact .mobile-menu-button{display:grid;width:34px;height:37px;order:-1}
+ .ef-workspace .top-icon-button,.ef-contact .top-icon-button{width:35px;height:37px}
+ .ef-workspace .user-meta,.ef-contact .user-meta{display:none}
+ .ef-workspace .avatar-image,.ef-contact .avatar-image{height:35px;width:35px}
+ .ef-workspace .user-chip-link,.ef-contact .user-chip-link{padding:0}
+ .ef-workspace .app-sidebar,.ef-contact .app-sidebar{
+   top:64px;bottom:0;left:0;width:min(284px,82vw);height:calc(100dvh - 64px);
+   transform:translateX(-108%);transition:transform .23s ease;
+   z-index:90;box-shadow:none;padding:16px 12px 16px;visibility:hidden;
+ }
+ .ef-workspace .app-sidebar.open,.ef-contact .app-sidebar.open{transform:translateX(0);visibility:visible;box-shadow:10px 10px 24px rgba(11,21,52,.12)}
+ .ef-workspace .ef-sidebar-backdrop.open,.ef-contact .ef-sidebar-backdrop.open{
+   position:fixed;inset:64px 0 0;display:block;background:rgba(11,21,52,.38);z-index:85;
+ }
+ .ef-workspace .app-main,.ef-contact .app-main{width:100%;margin-left:0;padding:23px 14px 62px}
+ .ef-workspace .page-heading{align-items:flex-start;flex-wrap:wrap}
+ .ef-workspace .page-heading h1{font-size:28px}
+ .ef-workspace .metric-grid{gap:10px}
+ .ef-workspace .metric-grid.ef-participant-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ef-workspace .metric-card{min-height:88px;padding:12px;gap:9px}
+ .ef-workspace .metric-icon{width:36px;height:36px;flex-basis:36px}
+ .ef-workspace .metric-card strong{font-size:22px}
+ .ef-workspace .metric-card span{font-size:10.5px}
+ .ef-workspace .analytics-chart-grid{grid-template-columns:1fr}
+ .ef-workspace .dashboard-event-row{grid-template-columns:84px minmax(0,1fr) auto;gap:10px}
+ .ef-workspace .dashboard-event-row>img{width:84px;height:67px}
+ .ef-workspace .dashboard-event-main strong{font-size:12px}
+ .ef-workspace .ef-event-link{min-width:0;font-size:10px;padding:6px 9px}
+ .ef-workspace .registration-card{grid-template-columns:115px minmax(0,1fr)}
+ .ef-workspace .registration-card>img{min-height:100px}
+ .ef-workspace .registration-card-body{padding:12px}
+ .ef-workspace .registration-card h2{font-size:17px}
+ .ef-workspace .management-grid{grid-template-columns:1fr}
+ .ef-contact .contact-layout{grid-template-columns:1fr}
+ .ef-contact .contact-public-shell{padding:22px 14px 55px}
+ .ef-workspace .profile-grid{grid-template-columns:1fr}
+ .ef-workspace .profile-summary-card{position:static}
+}
+@media(max-width:440px){
+ .ef-workspace .brand-logo,.ef-contact .brand-logo{width:135px}
+ .ef-workspace .user-chip-link,.ef-contact .user-chip-link{padding:0}
+ .ef-workspace .topbar-inner,.ef-contact .topbar-inner{gap:3px}
+ .ef-workspace .page-heading h1{font-size:26px}
+ .ef-workspace .metric-grid:not(.ef-participant-metrics){grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ef-workspace .metric-grid.ef-participant-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ef-workspace .metric-card{padding:10px}
+ .ef-workspace .metric-icon{width:32px;height:32px;flex:0 0 32px}
+ .ef-workspace .metric-card strong{font-size:21px}
+ .ef-workspace .large-surface{padding:15px 13px}
+ .ef-workspace .dashboard-event-row{grid-template-columns:74px minmax(0,1fr);gap:9px;padding:11px 0}
+ .ef-workspace .dashboard-event-row>img{width:74px;height:66px}
+ .ef-workspace .ef-event-link{grid-column:2;justify-self:start;margin-top:-3px}
+ .ef-workspace .dashboard-event-main>span{display:block;font-size:10px;margin-bottom:2px}
+ .ef-workspace .registration-filter-bar{gap:8px;justify-content:flex-start}
+ .ef-workspace .registration-filter-bar label{width:100%;margin:0}
+ .ef-workspace .registration-filter-bar .toolbar-select{flex:1;min-width:0;width:100%}
+ .ef-workspace .registration-filter-count{margin-left:0}
+ .ef-workspace .registration-card{grid-template-columns:1fr}
+ .ef-workspace .registration-card>img{height:136px;width:100%;min-height:0}
+ .ef-workspace .registration-card .card-actions{flex-wrap:wrap}
+ .ef-workspace .table-toolbar{flex-direction:column;align-items:stretch}
+ .ef-workspace .table-search{min-width:0;width:100%}
+ .ef-workspace .notification-panel{right:-47px}
+ .ef-workspace .form-actions-row{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+ .ef-workspace *, .ef-contact *{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+}
+
+/* V2 consistency pass: deeply nested organizer/admin editors and feedback.
+   Scope is intentionally limited to authenticated workspace, not approved home. */
+.ef-workspace .sidebar-footer {background:#fff!important;color:#53617b!important;}
+.ef-workspace .ticketing-overview>div,.ef-workspace .program-form-card,
+.ef-workspace .program-timeline-card,.ef-workspace .program-session-content,
+.ef-workspace .program-inline-editor,.ef-workspace .program-empty.wide,
+.ef-workspace .program-speaker-card,.ef-workspace .program-gallery-card,
+.ef-workspace .coupon-create-card,.ef-workspace .coupon-guidance-card,
+.ef-workspace .coupon-inline-editor,.ef-workspace .feedback-event-card,
+.ef-workspace .feedback-review-item,.ef-workspace .contact-review-panel,
+.ef-workspace .contact-review-head,.ef-workspace .contact-review-message {
+ background:#fff!important;color:#0b1534!important;border:1px solid #e3e9f2!important;box-shadow:none!important;
+ border-radius:12px;
+}
+.ef-workspace .program-form-card{top:calc(var(--topbar) + 12px)}
+.ef-workspace .program-event-stats>div,.ef-workspace .program-speaker-photo,
+.ef-workspace .speaker-photo-upload,.ef-workspace .program-count-badge,
+.ef-workspace .event-program-chips>span,.ef-workspace .compact-check,
+.ef-workspace .coupon-code-field,.ef-workspace .feedback-section-count,
+.ef-workspace .feedback-search,.ef-workspace .feedback-sort,
+.ef-workspace .contact-review-details summary,.ef-workspace .contact-review-close,
+.ef-workspace .ticket-coupon-input {
+ background:#f8fafc!important;color:#283b58!important;border:1px solid #dfe6f0!important;
+}
+.ef-workspace .program-event-stats strong,.ef-workspace .ticketing-overview strong,
+.ef-workspace .program-empty h3,.ef-workspace .event-program-chips strong,
+.ef-workspace .table-program-summary strong,.ef-workspace .coupon-code-cell strong,
+.ef-workspace .coupon-usage strong,.ef-workspace .feedback-no-score strong,
+.ef-workspace .feedback-review-person strong,.ef-workspace .feedback-score-main strong,
+.ef-workspace .admin-feedback-event-line strong,.ef-workspace .contact-sender-cell strong,
+.ef-workspace .contact-subject-cell strong,.ef-workspace .coupon-guidance-step strong {color:#101d3a!important;}
+.ef-workspace .program-empty p,.ef-workspace .program-session-content>p,
+.ef-workspace .program-speaker-copy>p,.ef-workspace .coupon-guidance-card>p,
+.ef-workspace .coupon-guidance-step p,.ef-workspace .coupon-guidance-note,
+.ef-workspace .feedback-review-item>p,.ef-workspace .feedback-review-footer,
+.ef-workspace .admin-feedback-event-line,.ef-workspace .contact-review-message p {color:#586983!important;}
+.ef-workspace .program-time-block span,.ef-workspace .program-session-meta,
+.ef-workspace .program-session-number,.ef-workspace .program-speaker-head span,
+.ef-workspace .program-count-badge,.ef-workspace .program-empty p,
+.ef-workspace .ticketing-overview span,.ef-workspace .coupon-code-cell small,
+.ef-workspace .coupon-form-grid .field-group>small,.ef-workspace .feedback-no-score small,
+.ef-workspace .optional-label {color:#66758f!important;}
+.ef-workspace .program-empty>div,.ef-workspace .program-form-icon {background:#fff4df!important;border-color:#e9d5a9!important;color:#a57600!important;}
+.ef-workspace .program-timeline-marker>span {border-color:#fff!important;}
+.ef-workspace .ticketing-overview>div:last-child strong {color:#a97500!important;}
+.ef-workspace .ticket-state.active,.ef-workspace .coupon-status.active,
+.ef-workspace .pricing-badge.free {color:#148250!important;background:#eaf8ef!important;border-color:#caecdc!important;}
+.ef-workspace .ticket-state.inactive,.ef-workspace .coupon-status.expired {color:#66738b!important;background:#f0f3f8!important;border-color:#e4e9f1!important;}
+.ef-workspace .coupon-status.paused {color:#926300!important;background:#fff4db!important;}
+.ef-workspace .coupon-guidance-step {border-bottom:1px solid #e8edf4;}
+.ef-workspace .coupon-guidance-note {background:#fff9ed!important;border:1px solid #eee0bb!important;}
+.ef-workspace .contact-review-panel {box-shadow:0 17px 50px rgba(11,21,52,.2)!important;}
+.ef-workspace .contact-review-message {background:#f8fafc!important;}
+.ef-workspace .contact-review-meta>a,.ef-workspace .contact-review-meta>span{background:#f6f8fc;color:#566580;}
+.ef-workspace .contact-type-badge {background:#f5f7fb;color:#4c5b74;border:1px solid #e1e8f0;}
+.ef-workspace .contact-sender-cell a,.ef-workspace .contact-subject-cell small{color:#62718a;}
+.ef-workspace .contact-review-details summary:hover,.ef-workspace .contact-review-close:hover{background:#fff3d7!important;color:#936100!important;}
+.ef-workspace .feedback-review-item>p.feedback-no-comment{color:#8591a4!important;}
+.ef-workspace .feedback-review-avatar{background:#fff2d4;color:#a77200;border-color:#e6cb90;}
+.ef-workspace .rating-bar-track{background:#e8edf4;}
+.ef-workspace .display-stars i{color:#bac4d1;}
+.ef-workspace .display-stars i.active{color:#dea51c;}
+.ef-workspace .feedback-review-rating strong{color:#a87300;}
+.ef-workspace .contact-status-badge.new{color:#956300;background:#fff5d9;}
+.ef-workspace .contact-status-badge.in_progress{color:#236bac;background:#edf5ff;}
+.ef-workspace .contact-status-badge.resolved{color:#167d4a;background:#eaf8f1;}
+.ef-workspace .feedback-metric-card {min-height:104px;padding:15px;}
+.ef-workspace .feedback-metric-card strong{font-size:24px;}
+.ef-workspace .program-event-chips,.ef-workspace .program-builder-layout,
+.ef-workspace .coupon-builder-layout {min-width:0;}
+.ef-workspace .program-gallery-card>img {object-fit:cover;}
+.ef-workspace .coupon-inline-editor,.ef-workspace .program-inline-editor {z-index:40;box-shadow:0 16px 42px rgba(11,21,52,.14)!important;}
+@media(max-width:760px){
+ .ef-workspace .program-builder-layout,.ef-workspace .ticket-builder-layout,.ef-workspace .coupon-builder-layout{grid-template-columns:minmax(0,1fr)!important;}
+ .ef-workspace .program-form-card{position:static!important;}
+ .ef-workspace .program-speaker-grid,.ef-workspace .feedback-event-grid{grid-template-columns:minmax(0,1fr)!important;}
+}
+
+/* Keep native Bootstrap-icon nodes so original JavaScript can still adjust classes.
+   SVG graphics replace font glyphs without breaking star selection / eye toggles. */
+.ef-workspace i.bi,.ef-contact i.bi {display:inline-flex;align-items:center;justify-content:center;font-size:0!important;font-style:normal;vertical-align:middle;}
+.ef-workspace i.bi::before,.ef-contact i.bi::before {content:none!important;display:none!important;}
+.ef-workspace i.bi .ef-icon,.ef-contact i.bi .ef-icon{width:1rem;height:1rem;stroke-width:1.9;display:block;}
+.ef-workspace .sidebar-nav i.bi .ef-icon {height:20px;width:20px;}
+.ef-workspace .display-stars i.bi .ef-icon,.ef-workspace .rating-bar-row i.bi .ef-icon{fill:currentColor;stroke-width:.7;}
+.ef-workspace .star-rating-input button i.bi .ef-icon {fill:none;}
+.ef-workspace .star-rating-input button.active i.bi .ef-icon {fill:currentColor;}
+
+/* Consistent category-fallback imagery uses the same assets as the approved home. */
+.ef-workspace .dashboard-event-row>img,.ef-workspace .registration-card>img,
+.ef-workspace .management-event-image,.ef-workspace .feedback-event-image img,
+.ef-workspace .event-table-title img,.ef-workspace .program-event-banner>img{background:#f6f8fb!important;object-fit:cover;}
+/* Final controls, data-table pagination and grouped feedback: avoid dark legacy islands. */
+.ef-workspace .ticketing-mode-option,
+.ef-workspace .feedback-event-review-group,
+.ef-workspace .operations-table-footer {
+  background:#fff!important;border:1px solid #e1e8f1!important;color:#0b1534!important;
+  box-shadow:none!important;
+}
+.ef-workspace .ticketing-mode-option strong,.ef-workspace .ticketing-helper strong,
+.ef-workspace .booking-event-cell strong,.ef-workspace .booking-date-cell strong,
+.ef-workspace .table-progress-cell>div:first-child {color:#0b1534!important;}
+.ef-workspace .ticketing-mode-option:has(input:checked){
+  background:#fff7e6!important;border-color:#e7c66b!important;box-shadow:0 0 0 2px rgba(222,167,37,.09)!important;
+}
+.ef-workspace .ticketing-mode-option:hover {background:#fffcf7!important;border-color:#e7c66b!important;}
+.ef-workspace .ticketing-mode-icon{background:#fff0ce;border:1px solid #e9d4a4;color:#a77500;}
+.ef-workspace .ticketing-helper,.ef-workspace .ticketing-mode-option small{color:#66758c!important;}
+.ef-workspace .feedback-event-image,.ef-workspace .feedback-group-event-main img{background:#f3f6fa!important;}
+.ef-workspace .feedback-event-review-group[open]{border-color:#e5c983!important;box-shadow:0 7px 24px rgba(11,21,52,.05)!important;}
+.ef-workspace .feedback-event-review-summary{background:#fff;}
+.ef-workspace .feedback-event-review-summary:hover{background:#fff9ed;}
+.ef-workspace .feedback-event-review-body{border-top:1px solid #e6ebf2;}
+.ef-workspace .table-page-button{background:#fff!important;color:#354662!important;border:1px solid #dce5ef!important;}
+.ef-workspace .table-page-button.active{background:#ffe5a4!important;color:#784f00!important;border-color:#e9bb57!important;}
+.ef-workspace .table-page-button:hover:not(:disabled){background:#fff4d9!important;border-color:#e5ca88!important;}
+.ef-workspace .table-page-size select{background:#fff!important;color:#20314a!important;border-color:#dae4ee;}
+.ef-workspace .table-page-ellipsis{color:#7a879a;}
+.ef-workspace .operations-table-footer{padding:12px 16px;}
+
+
+/* Repair: shared typographic rhythm and restrained profile treatment. */
+.ef-workspace, .ef-contact {font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;}
+.ef-workspace :is(button,input,select,textarea), .ef-contact :is(button,input,select,textarea) {font-family:inherit;}
+.ef-workspace .profile-grid {grid-template-columns:minmax(250px,340px) minmax(0,1fr);align-items:start;gap:18px;}
+.ef-workspace .profile-summary-card {position:static;padding:22px 20px;}
+.ef-workspace .profile-summary-card .profile-avatar-large {max-width:116px;max-height:116px;}
+.ef-workspace .profile-summary-card h2 {font-size:21px;margin-top:12px;}
+.ef-workspace .profile-summary-card>p {font-size:13px;margin:3px 0 17px;}
+.ef-workspace .profile-meta-list {gap:7px;}
+.ef-workspace .profile-meta-list>div {padding:9px 10px;}
+.ef-workspace .demo-account-card {
+  display:flex;flex-direction:row;align-items:flex-start;justify-content:flex-start;gap:15px;
+  min-height:0;padding:24px 26px;background:#fff!important;
+}
+.ef-workspace .demo-account-card .demo-account-icon {
+  flex:0 0 42px;width:42px;height:42px;border-radius:11px;margin:0;
+  background:#fff1d3;color:#a66e00;
+}
+.ef-workspace .demo-account-card .demo-account-text {min-width:0;flex:1;}
+.ef-workspace .demo-account-card h2 {margin:0 0 5px;font-family:Georgia,'Times New Roman',serif;font-size:20px;letter-spacing:-.02em;}
+.ef-workspace .demo-account-card p {font-size:13px;line-height:1.55;max-width:570px;margin:0;color:#5d6b82;}
+@media (max-width:990px) {
+  .ef-workspace .profile-grid {grid-template-columns:minmax(0,1fr);}
+  .ef-workspace .profile-summary-card {max-width:none;}
+}
+@media (max-width:560px) {
+  .ef-workspace .demo-account-card {padding:19px;gap:12px;}
+  .ef-workspace .profile-summary-card {padding:20px;}
+}
+
+
+/* Refined shared confirmation dialog; exact layout inspired by the approved
+   EventFlow logout screenshot. Normal actions are gold, destructive actions red. */
+.ef-workspace .confirm-modal,.ef-contact .confirm-modal{
+  padding:16px;background:rgba(25,29,41,.67);backdrop-filter:blur(2px);
+  z-index:2500;
+}
+.ef-workspace .confirm-card,.ef-contact .confirm-card{
+  position:relative;isolation:isolate;overflow:hidden;
+  width:min(392px,100%);min-height:auto;padding:27px 27px 26px;
+  text-align:center;border:1px solid #e5d7b4;border-radius:19px;
+  color:#101b3c;
+  background:radial-gradient(ellipse 59% 58% at -10% -13%,#ffebc1 0%,transparent 83%),
+             radial-gradient(ellipse 55% 58% at 106% 111%,#ffe5a9 0%,transparent 74%),
+             linear-gradient(125deg,#fffdfa 0%,#f8faff 54%,#fffaf1 100%);
+  box-shadow:0 25px 70px rgba(7,16,38,.27),0 4px 15px rgba(7,16,38,.1);
+  animation:efConfirmIn .19s cubic-bezier(.2,.7,.3,1) both;
+}
+.ef-workspace .confirm-card:before,.ef-contact .confirm-card:before{
+  content:"";position:absolute;inset:0;border-radius:19px;pointer-events:none;
+  border:1px solid rgba(255,255,255,.73);z-index:-1;
+}
+.ef-workspace .confirm-icon,.ef-contact .confirm-icon{
+  width:57px;height:57px;margin:0 auto 11px;border-radius:50%;
+  display:grid;place-items:center;font-size:27px;
+  color:#c78d0a;background:linear-gradient(145deg,#fff,#fff2d7);
+  box-shadow:0 7px 16px rgba(185,129,20,.13);
+}
+.ef-workspace .confirm-icon svg,.ef-contact .confirm-icon svg{width:27px;height:27px;display:block;stroke:currentColor;stroke-width:1.9;fill:none}
+.ef-workspace .confirm-card h3,.ef-contact .confirm-card h3{
+  margin:3px 0 8px;color:#0e1937;
+  font:700 25px/1.2 Georgia,'Times New Roman',serif;letter-spacing:-.025em;
+}
+.ef-workspace .confirm-card p,.ef-contact .confirm-card p{
+  max-width:325px;margin:0 auto;color:#63738e;font-size:12.5px;line-height:1.55;
+}
+.ef-workspace .confirm-actions,.ef-contact .confirm-actions{
+  display:flex;justify-content:center;gap:10px;margin-top:27px;
+}
+.ef-workspace .confirm-actions button,.ef-contact .confirm-actions button{
+  width:135px;min-height:44px;padding:9px 12px;border-radius:10px;
+  font-size:12.5px;font-weight:750;cursor:pointer;
+  transition:background .15s,box-shadow .15s,transform .15s,border-color .15s;
+}
+.ef-workspace .confirm-actions #confirmCancel,.ef-contact .confirm-actions #confirmCancel{
+  background:#f7f8fb;color:#263550;border:1px solid #dfe4ec;
+}
+.ef-workspace .confirm-actions #confirmCancel:hover,.ef-contact .confirm-actions #confirmCancel:hover{
+  background:#eff1f7;transform:translateY(-1px);
+}
+.ef-workspace .confirm-actions #confirmProceed,.ef-contact .confirm-actions #confirmProceed{
+  background:linear-gradient(125deg,#f3b92d,#d99604);color:#fff;
+  border:1px solid #dfa51d;box-shadow:0 6px 13px rgba(198,134,8,.17);
+}
+.ef-workspace .confirm-actions #confirmProceed:hover,.ef-contact .confirm-actions #confirmProceed:hover{
+  background:linear-gradient(125deg,#e9ae1e,#c78800);box-shadow:0 8px 17px rgba(198,134,8,.22);transform:translateY(-1px);
+}
+.ef-workspace .confirm-modal.is-danger .confirm-icon,.ef-contact .confirm-modal.is-danger .confirm-icon{
+  color:#b83548;background:#fff1f2;
+}
+.ef-workspace .confirm-modal.is-danger #confirmProceed,.ef-contact .confirm-modal.is-danger #confirmProceed{
+  background:#bb394c;border-color:#bb394c;box-shadow:none;
+}
+@keyframes efConfirmIn{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
+@media(max-width:420px){
+ .ef-workspace .confirm-card,.ef-contact .confirm-card{padding:25px 18px 22px}
+ .ef-workspace .confirm-actions button,.ef-contact .confirm-actions button{flex:1;min-width:0}
+}
+@media(prefers-reduced-motion:reduce){
+ .ef-workspace .confirm-card,.ef-contact .confirm-card{animation:none}
+ .ef-workspace .confirm-actions button,.ef-contact .confirm-actions button{transition:none}
+}
+
+
+/* One visible focus indicator per control, not overlapping outlines. */
+.ef-workspace .table-search,.ef-workspace .filter-search,.ef-workspace .filter-select,
+.ef-workspace .toolbar-select,.ef-workspace .table-filter{
+  transition:border-color .16s,box-shadow .16s,background .16s;
+}
+.ef-workspace .table-search input,.ef-workspace .filter-search input,
+.ef-workspace .table-search input:focus,.ef-workspace .table-search input:focus-visible,
+.ef-workspace .filter-search input:focus,.ef-workspace .filter-search input:focus-visible{
+  border:0!important;outline:0!important;box-shadow:none!important;
+  min-width:0;background:transparent!important;
+}
+.ef-workspace .table-search:focus-within,.ef-workspace .filter-search:focus-within{
+  border-color:#d6a12a!important;box-shadow:0 0 0 3px rgba(220,166,42,.17);
+}
+.ef-workspace .table-toolbar .toolbar-select:focus-visible,.ef-workspace .table-toolbar .table-filter:focus-visible{
+  outline:0!important;box-shadow:0 0 0 3px rgba(220,166,42,.17)!important;border-color:#d6a12a!important;
+}
+.ef-workspace .table-toolbar{gap:11px;padding:14px 17px;background:#fff}
+.ef-workspace .table-search{flex:2 1 285px;min-height:45px;display:flex;align-items:center;gap:9px;padding:0 12px;border-radius:11px}
+.ef-workspace .table-search input{width:100%;font-size:13px}
+.ef-workspace .table-search .ef-icon{color:#bf870c}
+.ef-workspace .table-toolbar .toolbar-select{flex:1 1 158px;max-width:230px;min-height:45px;font-size:12.5px}
+.ef-workspace .table-count{min-height:42px;display:inline-flex;align-items:center;padding:0 12px}
+.ef-workspace .table-user strong{font-size:13px}
+.ef-workspace .data-table tbody tr{transition:background .15s}
+.ef-workspace .role-chip{border-radius:8px;padding:6px 10px;font-size:11px;font-weight:750}
+.ef-workspace .table-card{border-radius:15px;box-shadow:0 5px 22px rgba(18,35,69,.042)}
+.ef-workspace .ef-user-table-footer{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:52px;padding:10px 17px;color:#718098;font-size:12px;background:#fff;
+}
+.ef-workspace .ef-user-pagination{display:flex;gap:5px;align-items:center}
+.ef-workspace .ef-user-page-btn{
+  border:1px solid #e1e6ef;background:#fff;color:#405472;border-radius:8px;
+  min-width:33px;min-height:33px;cursor:pointer;font:650 12px Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+.ef-workspace .ef-user-page-btn.active{background:#fff1c9;color:#8d5c00;border-color:#efce7e}
+.ef-workspace .ef-user-page-btn:hover:not(:disabled){border-color:#d8ae4e;background:#fff8e9}
+.ef-workspace .ef-user-page-btn:disabled{opacity:.4;cursor:default}
+@media(max-width:680px){
+ .ef-workspace .table-toolbar .toolbar-select{max-width:none;flex:1 1 calc(50% - 12px)}
+ .ef-workspace .ef-user-table-footer{flex-wrap:wrap}
+}
+
+
+/* 2026-10-11 contrast correction: light surfaces must never inherit text from
+   EventFlow's legacy dark dashboard theme. */
+body.ef-workspace :is(.operations-metric-card,.feedback-metric-card,.analytics-kpi,.contact-person-card,.contact-channel),
+body.ef-contact :is(.contact-person-card,.contact-channel) {color:#142240;}
+body.ef-workspace .operations-metric-card strong,
+body.ef-workspace .feedback-metric-card strong,
+body.ef-workspace .operations-metric-card > div > strong {color:#101b3c!important;opacity:1!important;text-shadow:none!important;}
+body.ef-workspace .operations-metric-card :is(small,span:not(.operations-metric-icon)),
+body.ef-workspace .feedback-metric-card small {color:#53637d!important;opacity:1;}
+body.ef-workspace .contact-person-card strong,
+body.ef-workspace .contact-channel strong,
+body.ef-contact .contact-person-card strong,
+body.ef-contact .contact-channel strong {color:#152344!important;opacity:1!important;}
+body.ef-workspace .contact-channel small,
+body.ef-workspace .contact-person-card small,
+body.ef-contact .contact-channel small,
+body.ef-contact .contact-person-card small {color:#52627e!important;}
+body.ef-workspace .contact-info-top p,
+body.ef-workspace .contact-form-heading p,
+body.ef-contact .contact-info-top p,
+body.ef-contact .contact-form-heading p {color:#586982!important;}
+body.ef-workspace .contact-info-card :is(.contact-person-card,.contact-channel),
+body.ef-contact .contact-info-card :is(.contact-person-card,.contact-channel){background:#f8fafc;border-color:#e1e7ef;}
+body.ef-workspace .contact-info-card .contact-channel:not(.static):hover,
+body.ef-contact .contact-info-card .contact-channel:not(.static):hover{background:#fff8e9;border-color:#e9c77d;}
+body.ef-workspace :is(.program-empty,.program-inline-editor) h3,
+body.ef-workspace :is(.program-empty,.program-inline-editor) strong {color:#142240!important;}
+body.ef-workspace .program-empty p {color:#586983!important;}
+/* Single intentional focus treatment, not a gold border plus blue outline. */
+body.ef-workspace :is(input,select,textarea):focus-visible,
+body.ef-contact :is(input,select,textarea):focus-visible {outline:0!important;border-color:#d6a022!important;box-shadow:0 0 0 3px rgba(218,163,29,.19)!important;}
+body.ef-workspace :is(input,select,textarea):focus,
+body.ef-contact :is(input,select,textarea):focus {outline:0!important;}
+body.ef-workspace :is(input,select,textarea)::placeholder,
+body.ef-contact :is(input,select,textarea)::placeholder {color:#77849a;opacity:1;}
+body.ef-workspace .data-table tbody tr:hover {background:#fffaf0;}
+body.ef-workspace .data-table tbody :is(td,td strong,td span) {text-shadow:none;}
+body.ef-workspace button:not(:disabled),body.ef-contact button:not(:disabled){cursor:pointer;}
+@media (prefers-reduced-motion:reduce){body.ef-workspace :is(button,a),body.ef-contact :is(button,a){transition:none!important;}}
+
+body.ef-workspace .gmail-contact-mark img,body.ef-contact .gmail-contact-mark img{width:26px;height:26px;display:block;object-fit:contain;}
+
+/* FINAL LIGHT-SURFACE CONTRAST: legacy dark text must not bleed into white UI. */
+body.ef-workspace .booking-ticket-cell strong,
+body.ef-workspace .ticket-type-card h3,
+body.ef-workspace .ticket-type-card .ticket-price,
+body.ef-workspace .ticket-type-card .ticket-capacity-row strong,
+body.ef-workspace .program-speaker-card h3,
+body.ef-workspace .program-speaker-copy h3,
+body.ef-workspace .program-session-content h3,
+body.ef-workspace .table-program-summary strong,
+body.ef-workspace .table-user strong,
+body.ef-workspace .operations-metric-card strong,
+body.ef-workspace .contact-person-card strong,
+body.ef-workspace .contact-channel strong {color:#142340!important;opacity:1!important;text-shadow:none!important;}
+body.ef-workspace .booking-ticket-cell small {color:#906000!important;opacity:1!important;}
+body.ef-workspace .ticket-type-card :is(p,small),
+body.ef-workspace .ticket-capacity-row span,
+body.ef-workspace .program-speaker-copy>p,
+body.ef-workspace .table-user small {color:#53647f!important;opacity:1!important;}
+body.ef-workspace :is(.analytics-kpi,.metric-card,.operations-metric-card,.feedback-metric-card) strong {
+  color:#101b3c!important;opacity:1!important;filter:none!important;text-shadow:none!important;
+}
+body.ef-workspace :is(.program-empty,.clean-empty,.large-empty) :is(h2,h3,strong),
+body.ef-contact .contact-info-card strong {color:#152442!important;opacity:1!important;}
+body.ef-workspace :is(.program-empty,.clean-empty,.large-empty) p,
+body.ef-contact .contact-info-card :is(p,small) {color:#566784!important;opacity:1!important;}
+/* The Users column starts at exactly the same position in every row. */
+body.ef-workspace #userTable td:first-child {text-align:left!important;padding-left:15px!important;}
+body.ef-workspace #userTable td:first-child .table-user {
+  display:flex;align-items:center;justify-content:flex-start!important;
+  gap:12px;text-align:left!important;width:100%;margin:0;
+}
+body.ef-workspace #userTable td:first-child .table-user .avatar {
+  flex:0 0 38px!important;width:38px;height:38px;margin:0;
+}
+body.ef-workspace #userTable td:first-child .table-user>div {min-width:0;text-align:left;}
+/* Brand mark: keep the multicolor Gmail SVG clear of gold icon-box styles. */
+body.ef-workspace .gmail-contact-mark,body.ef-contact .gmail-contact-mark {
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  color:inherit!important;border-radius:0!important;
+}
+body.ef-workspace .gmail-contact-mark img,body.ef-contact .gmail-contact-mark img {
+  width:26px;height:26px;max-width:100%;object-fit:contain;filter:none;
+}
+/* A single accessible gold focus ring for search, tables and ordinary forms. */
+body.ef-workspace .table-search input:focus,
+body.ef-workspace .table-search input:focus-visible {
+  outline:0!important;border:0!important;box-shadow:none!important;
+}
+body.ef-workspace .table-search:focus-within {
+  border-color:#d7a22c!important;box-shadow:0 0 0 3px rgba(215,162,44,.16)!important;
+}
+body.ef-workspace .data-table tbody tr:hover td {background:#fff8e9!important;}
+@media(max-width:640px){
+  body.ef-workspace .data-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  body.ef-workspace .confirm-card{width:min(100%,392px);}
+}
+
+/* Readability sweep: all management data stays high-contrast on light cards. */
+body.ef-workspace :is(.data-table,.operations-data-table,.booking-table,.program-session-card) :is(strong,h3,h4),
+body.ef-workspace :is(.booking-ticket-cell,.booking-event-cell,.booking-date-cell,.analytics-card-head,.gallery-card-head,.sponsor-card-copy) strong,
+body.ef-workspace :is(.public-ticket-card,.ticketing-overview,.gallery-upload-placeholder,.program-sponsor-card,.program-speaker-card) :is(h3,strong),
+body.ef-workspace :is(.feedback-review-item,.feedback-form-group,.feedback-score-main) :is(strong,h3,label) {
+ color:#11203c!important;opacity:1!important;text-shadow:none!important;
+}
+body.ef-workspace :is(.data-table,.operations-data-table,.booking-table,.program-session-card,.feedback-review-item) :is(p,small),
+body.ef-workspace :is(.gallery-card-head,.sponsor-card-copy,.program-empty,.public-ticket-card) p,
+body.ef-workspace .operations-table-footer .table-range {color:#576983!important;opacity:1!important;}
+body.ef-workspace .public-ticket-card,
+body.ef-workspace .program-sponsor-card,
+body.ef-workspace .feedback-review-item,
+body.ef-workspace .gallery-card-head {background:#fff!important;border-color:#e1e7f0!important;}
+body.ef-workspace :is(.gallery-card-head,.ticketing-helper,.program-empty.wide) {background:#f9fafc!important;border-color:#e1e7f0!important;}
+body.ef-workspace .operations-data-table tbody tr:hover td,
+body.ef-workspace .data-table tbody tr:hover td {background:#fff9ed!important;color:#162540!important;}
+body.ef-workspace #userTable th:first-child {text-align:left!important;padding-left:15px!important;}
+body.ef-workspace #userTable td:first-child .table-user {justify-content:flex-start!important;}
+@media (max-width:760px) {
+ body.ef-workspace :is(.data-table-wrap,.operations-table-wrap) {overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch;}
+ body.ef-workspace .operations-metric-grid {grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));}
+}
+
+/* Match Admin filters on the Organizer My Events page. */
+.ef-workspace .organizer-event-filters{margin-bottom:16px;overflow:hidden}
+.ef-workspace .organizer-event-filters .table-toolbar{border-bottom:0}
+
+/* Event Program media uploads: keep empty previews hidden and match the light workspace. */
+body.ef-workspace :is(.gallery-upload-preview, .sponsor-logo-preview, .gallery-upload-placeholder, .sponsor-logo-placeholder)[hidden] {
+  display: none !important;
+}
+body.ef-workspace :is(.gallery-image-upload, .sponsor-logo-upload) {
+  background: #fffdf8;
+  border-color: #e9d6a5;
+}
+body.ef-workspace :is(.gallery-image-upload, .sponsor-logo-upload):hover {
+  background: #fff9ec;
+  border-color: #dba126;
+}
+body.ef-workspace .gallery-upload-placeholder { color: #617189; }
+body.ef-workspace .gallery-upload-placeholder strong { color: #11203c !important; }
+body.ef-workspace .sponsor-logo-placeholder { color: #a67708; }
+body.ef-workspace .sponsor-logo-upload img:not([hidden]) { background: #fffdf8; }
+
+/* Event Program media fixes: only the management workspace is affected. */
+body.ef-workspace .program-speaker-card,
+body.ef-workspace .program-sponsor-card { align-items: start; }
+body.ef-workspace .program-speaker-photo {
+  width: 100%; height: 180px; min-height: 0; align-self: start; overflow: hidden;
+}
+body.ef-workspace .program-speaker-photo img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+}
+body.ef-workspace .program-sponsor-logo {
+  width: 100%; height: 175px; min-height: 0; align-self: start; overflow: hidden;
+}
+body.ef-workspace .program-sponsor-logo img {
+  width: 100%; height: 100%; object-fit: contain;
+}
+/* Avoid the old dark native file input in expanded Speaker/Sponsor editors. */
+body.ef-workspace .program-inline-editor input[type="file"] {
+  width: 100%; min-width: 0; height: auto; min-height: 52px; padding: 9px;
+  color: #253954 !important; background: #fffdf8 !important;
+  border: 1px dashed #e2c989 !important; border-radius: 12px;
+  font: inherit; font-size: .84rem; cursor: pointer;
+}
+body.ef-workspace .program-inline-editor input[type="file"]::file-selector-button {
+  margin-right: 12px; padding: 8px 13px; border: 0; border-radius: 8px;
+  color: #172440; background: #f5c347; font: inherit; font-weight: 750; cursor: pointer;
+}
+/* A missing/empty preview always shows the existing upload placeholder, not a broken <img>. */
+body.ef-workspace :is(.gallery-image-upload, .sponsor-logo-upload) :is(.gallery-upload-preview, .sponsor-logo-preview) {
+  display: none !important;
+}
+body.ef-workspace :is(.gallery-image-upload, .sponsor-logo-upload).has-preview :is(.gallery-upload-preview, .sponsor-logo-preview):not([hidden]) {
+  display: block !important;
+}
+body.ef-workspace :is(.gallery-image-upload, .sponsor-logo-upload).has-preview :is(.gallery-upload-placeholder, .sponsor-logo-placeholder) {
+  display: none !important;
+}
+body.ef-workspace :is(.gallery-image-upload, .sponsor-logo-upload):not(.has-preview) :is(.gallery-upload-placeholder, .sponsor-logo-placeholder) {
+  display: grid !important;
+}
+/* When an uploaded sponsor logo is unavailable, retain the original building icon. */
+body.ef-workspace .program-sponsor-logo .sponsor-logo-fallback[hidden],
+.public-sponsor-logo .sponsor-logo-fallback[hidden] { display: none !important; }
+@media (max-width: 520px) {
+  body.ef-workspace .program-speaker-card { grid-template-columns: 110px minmax(0,1fr); }
+  body.ef-workspace .program-speaker-photo { height: 145px; }
+}
+
+/* Clear registration and capacity totals on every light Organizer/Admin workspace card. */
+body.ef-workspace .management-event-card .capacity-block strong {
+  color:#142340!important;opacity:1!important;text-shadow:none!important;
+}
+body.ef-workspace .management-event-card .capacity-block>div:first-child span {
+  color:#526582;opacity:1;
+}

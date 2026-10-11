@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#ffffff">
+    <title>EventFlow | Contact Requests</title>
+    <link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png(v='20260923couponcontact1')}" href="/images/eventflow-favicon.png?v=20260923couponcontact1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css(v=20261011clean)}" href="/css/site.css?v=20261011clean">
+    <link rel="stylesheet" th:href="@{/css/workspace-final.css(v=20261011full)}" href="/css/workspace-final.css?v=20261011full">
+</head>
+<body class="ef-workspace">
+<div th:replace="~{fragments :: topbar}"></div>
+<div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('contact-requests')}"></div>
+    <main class="app-main">
+        <section class="page-heading">
+            <div><span class="section-kicker">SUPPORT OPERATIONS</span><h1>Contact Requests</h1><p>Review incoming support messages, track progress and keep internal resolution notes.</p></div>
+
+        </section>
+
+        <section class="operations-metric-grid">
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-inbox"></i></span><div><small>Total Requests</small><strong th:text="${#lists.size(contactRequests)}">0</strong><span>all submissions</span></div></article>
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-circle-fill"></i></span><div><small>New</small><strong th:text="${newRequestCount}">0</strong><span>need review</span></div></article>
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-hourglass-split"></i></span><div><small>In Progress</small><strong th:text="${inProgressRequestCount}">0</strong><span>being handled</span></div></article>
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-check2-circle"></i></span><div><small>Resolved</small><strong th:text="${resolvedRequestCount}">0</strong><span>completed</span></div></article>
+        </section>
+
+        <section class="operations-table-card" data-smart-table data-row-label="request" data-row-label-plural="requests">
+            <div class="operations-table-head">
+                <div><span class="section-kicker">INBOX</span><h2>Support Inbox</h2><p>Search by sender, subject, email or message and filter by workflow status.</p></div>
+                <span class="operations-result-count" data-table-count th:text="${#lists.size(contactRequests) + (#lists.size(contactRequests) == 1 ? ' request' : ' requests')}">0 requests</span>
+            </div>
+
+            <div class="operations-toolbar">
+                <label class="table-search operations-search"><i class="bi bi-search"></i><input type="search" data-table-search placeholder="Search name, email, subject or message..."></label>
+                <select class="toolbar-select" data-table-filter="status"><option value="ALL">All statuses</option><option value="NEW">New</option><option value="IN_PROGRESS">In Progress</option><option value="RESOLVED">Resolved</option></select>
+                <select class="toolbar-select event-filter-select" data-table-filter="type"><option value="ALL">All request types</option><option value="GENERAL_INQUIRY">General Inquiry</option><option value="EVENT_SUPPORT">Event Support</option><option value="REGISTRATION_ISSUE">Registration Issue</option><option value="COUPON_PRICING_ISSUE">Coupon / Pricing Issue</option><option value="ORGANIZER_SUPPORT">Organizer Support</option><option value="TECHNICAL_PROBLEM">Technical Problem</option><option value="OTHER">Other</option></select>
+                <select class="toolbar-select compact-toolbar-select" data-table-page-size><option value="10">10 per page</option><option value="25">25 per page</option><option value="50">50 per page</option><option value="ALL">Show all</option></select>
+            </div>
+
+            <div class="table-scroll">
+                <table class="data-table contact-request-table">
+                    <thead><tr><th>Sender</th><th>Request</th><th>Type</th><th>Status</th><th>Submitted</th><th>Review</th></tr></thead>
+                    <tbody data-table-body>
+                    <tr th:each="request : ${contactRequests}" th:id="${'request-' + request.id}" th:attr="data-search=${request.fullName + ' ' + request.email + ' ' + request.subject + ' ' + request.message},data-status=${request.status},data-type=${request.requestType}">
+                        <td><div class="contact-sender-cell"><span th:text="${#strings.substring(request.fullName,0,1)}">S</span><div><strong th:text="${request.fullName}">Name</strong><a th:href="${'mailto:' + request.email}" th:text="${request.email}">email</a><small th:if="${request.phone != null and !request.phone.isBlank()}" th:text="${request.phone}">Phone</small></div></div></td>
+                        <td><div class="contact-subject-cell"><strong th:text="${request.subject}">Subject</strong><small th:text="${#strings.abbreviate(request.message, 90)}">Message preview</small></div></td>
+                        <td><span class="contact-type-badge" th:text="${@display.requestType(request)}">Type</span></td>
+                        <td><span class="contact-status-badge" th:classappend="${' ' + #strings.toLowerCase(request.status)}" th:text="${@display.requestStatus(request)}">New</span></td>
+                        <td th:text="${@display.requestCreated(request)}">Date</td>
+                        <td>
+                            <details class="contact-review-details">
+                                <summary><i class="bi bi-eye"></i>Review</summary>
+                                <div class="contact-review-panel">
+                                    <div class="contact-review-head">
+                                        <div><span class="section-kicker" th:text="${@display.requestType(request)}">TYPE</span><h3 th:text="${request.subject}">Subject</h3></div>
+                                        <div class="contact-review-head-actions">
+                                            <span class="contact-status-badge" th:classappend="${' ' + #strings.toLowerCase(request.status)}" th:text="${@display.requestStatus(request)}">New</span>
+                                            <button class="contact-review-close" type="button" aria-label="Close review" title="Close"><i class="bi bi-x-lg"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="contact-review-message"><small>Message</small><p th:text="${request.message}">Message</p></div>
+                                    <div class="contact-review-meta"><span><i class="bi bi-person"></i><strong th:text="${request.fullName}">Name</strong></span><a th:href="${'mailto:' + request.email}"><i class="bi bi-envelope"></i><span th:text="${request.email}">Email</span></a><span th:if="${request.phone != null and !request.phone.isBlank()}"><i class="bi bi-telephone"></i><span th:text="${request.phone}">Phone</span></span></div>
+                                    <form class="contact-review-form" th:action="@{'/admin/contact-requests/' + ${request.id} + '/update'}" method="post" data-loading>
+                                        <div class="field-group"><label>Status</label><select name="status" required><option value="NEW" th:selected="${request.status == 'NEW'}">New</option><option value="IN_PROGRESS" th:selected="${request.status == 'IN_PROGRESS'}">In Progress</option><option value="RESOLVED" th:selected="${request.status == 'RESOLVED'}">Resolved</option></select></div>
+                                        <div class="field-group"><label>Internal admin note <span class="optional-label">Not shown publicly</span></label><textarea name="adminNote" rows="4" maxlength="1000" placeholder="Add resolution details, follow-up notes or context..." th:text="${request.adminNote}"></textarea></div>
+                                        <div class="contact-review-actions"><button class="primary-button" type="submit"><i class="bi bi-check2"></i>Save Update</button></div>
+                                    </form>
+                                    <form class="contact-delete-form confirm-form" th:action="@{'/admin/contact-requests/' + ${request.id} + '/delete'}" method="post" data-confirm-title="Delete this contact request?" data-confirm="The request and internal note will be permanently removed." data-confirm-action="Delete Request"><button class="text-danger-button" type="submit"><i class="bi bi-trash3"></i>Delete Request</button></form>
+                                </div>
+                            </details>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="clean-empty" data-table-empty th:style="${#lists.isEmpty(contactRequests)} ? '' : 'display:none'"><i class="bi bi-inbox"></i><h3>No contact requests found</h3><p>New support submissions will appear here.</p></div>
+            <div class="operations-table-footer"><span data-table-range></span><div class="table-pagination" data-table-pagination></div></div>
+        </section>
+    </main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div><div th:replace="~{fragments :: confirmModal}"></div>
+<script th:src="@{/js/site.js(v='20260923finalfix2')}" src="/js/site.js?v=20260923finalfix2"></script>
+
+<script th:src="@{/js/workspace-final.js(v=20261011clean)}" src="/js/workspace-final.js?v=20261011clean" defer></script>
+</body>
+</html>

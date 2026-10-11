@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header class="topbar" th:fragment="topbar">
+    <div class="topbar-inner">
+        <button class="mobile-menu-button" id="sidebarToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="appSidebar">
+            <i class="bi bi-list"></i>
+        </button>
+        <a class="brand" th:href="@{/dashboard}" aria-label="EventFlow dashboard">
+            <img class="brand-logo" th:src="@{/images/eventflow-logo-original.png}" src="/images/eventflow-logo-original.png" alt="EventFlow">
+        </a>
+        <div class="topbar-spacer"></div>
+        <div class="notification-wrap">
+            <button class="top-icon-button" id="notificationToggle" type="button" aria-label="Notifications">
+                <i class="bi bi-bell"></i>
+                <span class="notification-badge" th:if="${unreadCount != null and unreadCount > 0}" th:text="${unreadCount > 99 ? '99+' : unreadCount}">3</span>
+            </button>
+            <div class="notification-panel" id="notificationPanel">
+                <div class="notification-panel-head">
+                    <div><strong>Notifications</strong><span th:text="${unreadCount != null ? unreadCount + ' unread' : '0 unread'}">0 unread</span></div>
+                    <a th:href="@{/notifications}">View all</a>
+                </div>
+                <div class="notification-preview-list" id="notificationPreviewList" data-preview-url="/notifications/preview" aria-live="polite">
+                    <div class="notification-empty"><i class="bi bi-bell"></i><span>Open to view notifications.</span></div>
+                </div>
+            </div>
+        </div>
+        <a class="user-chip user-chip-link" th:href="@{/profile}" title="Open profile">
+            <img class="avatar avatar-image" th:src="${currentUser.profileImageUrl != null ? currentUser.profileImageUrl : '/images/default-avatar.png'}" src="/images/default-avatar.png" alt="Profile picture">
+            <div class="user-meta">
+                <strong th:text="${currentUser.fullName}">User</strong>
+                <span th:text="${currentUser.role}">ROLE</span>
+            </div>
+        </a>
+
+    </div>
+</header>
+
+<aside class="app-sidebar" id="appSidebar" th:fragment="sidebar(active)">
+    <nav class="sidebar-nav">
+        <a th:href="@{/dashboard}" th:classappend="${active == 'dashboard'} ? ' active' : ''"><i class="bi bi-grid-1x2"></i><span>Dashboard</span></a>
+        <a th:if="${currentUser.role == 'PARTICIPANT'}" th:href="@{/events}" th:classappend="${active == 'events'} ? ' active' : ''"><i class="bi bi-search"></i><span>Explore Events</span></a>
+
+        <th:block th:if="${currentUser.role == 'PARTICIPANT'}">
+            <a th:href="@{/participant/registrations}" th:classappend="${active == 'registrations'} ? ' active' : ''"><i class="bi bi-ticket-perforated"></i><span>My Registrations</span></a>
+        </th:block>
+
+        <th:block th:if="${currentUser.role == 'ORGANIZER'}">
+            <a th:href="@{/organizer/events}" th:classappend="${active == 'myevents'} ? ' active' : ''"><i class="bi bi-calendar2-week"></i><span>My Events</span></a>
+            <a th:href="@{/organizer/events/new}" th:classappend="${active == 'create'} ? ' active' : ''"><i class="bi bi-plus-square"></i><span>Create Event</span></a>
+            <a th:href="@{/organizer/bookings}" th:classappend="${active == 'bookings'} ? ' active' : ''"><i class="bi bi-ticket-perforated"></i><span>Booking Management</span></a>
+            <a th:href="@{/organizer/coupons}" th:classappend="${active == 'coupons'} ? ' active' : ''"><i class="bi bi-percent"></i><span>Coupons</span></a>
+            <a th:href="@{/organizer/past-events}" th:classappend="${active == 'past-events'} ? ' active' : ''"><i class="bi bi-clock-history"></i><span>Past Events</span></a>
+            <a th:href="@{/organizer/feedback}" th:classappend="${active == 'feedback'} ? ' active' : ''"><i class="bi bi-star"></i><span>Feedback & Ratings</span></a>
+        </th:block>
+
+        <th:block th:if="${currentUser.role == 'ADMIN'}">
+            <a th:href="@{/admin/users}" th:classappend="${active == 'users'} ? ' active' : ''"><i class="bi bi-people"></i><span>Users</span></a>
+            <a th:href="@{/admin/events}" th:classappend="${active == 'manage-events'} ? ' active' : ''"><i class="bi bi-calendar-check"></i><span>Manage Events</span></a>
+            <a th:href="@{/admin/registrations}" th:classappend="${active == 'bookings'} ? ' active' : ''"><i class="bi bi-ticket-perforated"></i><span>Booking Management</span></a>
+            <a th:href="@{/admin/coupons}" th:classappend="${active == 'coupons'} ? ' active' : ''"><i class="bi bi-percent"></i><span>Coupons</span></a>
+            <a th:href="@{/admin/past-events}" th:classappend="${active == 'past-events'} ? ' active' : ''"><i class="bi bi-clock-history"></i><span>Past Events</span></a>
+            <a th:href="@{/admin/feedback}" th:classappend="${active == 'feedback'} ? ' active' : ''"><i class="bi bi-star"></i><span>Feedback & Ratings</span></a>
+            <a th:href="@{/admin/contact-requests}" th:classappend="${active == 'contact-requests'} ? ' active' : ''"><i class="bi bi-chat-left-text"></i><span>Contact Requests</span><em th:if="${newContactRequestCount != null and newContactRequestCount > 0}" th:text="${newContactRequestCount}">1</em></a>
+        </th:block>
+
+        <a th:if="${currentUser.role != 'ADMIN'}" th:href="@{/contact}" th:classappend="${active == 'contact'} ? ' active' : ''"><i class="bi bi-headset"></i><span>Contact Support</span></a>
+        <a th:href="@{/profile}" th:classappend="${active == 'profile'} ? ' active' : ''"><i class="bi bi-person-circle"></i><span>Profile</span></a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="sidebar-role"><span th:text="${currentUser.role}">PARTICIPANT</span></div>
+        <form class="sidebar-logout confirm-form" th:action="@{/logout}" method="post"
+              data-confirm-title="Log Out?"
+              data-confirm="Are you sure you want to log out of EventFlow?"
+              data-confirm-action="Log Out">
+            <button type="submit"><i class="bi bi-box-arrow-right"></i><span>Logout</span></button>
+        </form>
+    </div>
+</aside>
+
+<div class="toast-stack" th:fragment="toasts">
+    <div class="app-toast success" th:if="${toastSuccess}"><i class="bi bi-check-circle-fill"></i><span th:text="${toastSuccess}">Success</span><button type="button" aria-label="Close">×</button></div>
+    <div class="app-toast error" th:if="${toastError}"><i class="bi bi-exclamation-circle-fill"></i><span th:text="${toastError}">Error</span><button type="button" aria-label="Close">×</button></div>
+    <script th:src="@{/js/event-image-fallback.js(v=20261011original2)}" src="/js/event-image-fallback.js?v=20261011"></script>
+</div>
+
+<div class="confirm-modal" id="confirmModal" th:fragment="confirmModal">
+    <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMessage">
+        <div class="confirm-icon" aria-hidden="true"><i class="bi bi-exclamation-triangle"></i></div>
+        <h3 id="confirmTitle">Confirm action</h3>
+        <p id="confirmMessage">Are you sure you want to continue?</p>
+        <div class="confirm-actions">
+            <button class="secondary-button" id="confirmCancel" type="button">Cancel</button>
+            <button class="danger-button" id="confirmProceed" type="button">Confirm</button>
+        </div>
+    </div>
+</div>
+
+
+<header class="public-nav" th:fragment="publicNav(active)">
+    <div class="public-nav-inner">
+        <a class="public-brand" th:href="@{/}" aria-label="EventFlow home">
+            <img class="public-logo-light" th:src="@{/images/eventflow-logo-original.png}" src="/images/eventflow-logo-original.png" alt="EventFlow">
+            <img class="public-logo-dark" th:src="@{/images/eventflow-logo.png}" src="/images/eventflow-logo.png" alt="EventFlow">
+        </a>
+        <nav class="public-nav-links" aria-label="Public navigation">
+            <a th:href="@{/}" th:classappend="${active == 'home'} ? ' active' : ''">Home</a>
+            <a th:href="@{/events}" th:classappend="${active == 'events'} ? ' active' : ''">Explore Events</a>
+        </nav>
+        <div class="public-nav-actions">
+            <button class="public-theme-toggle" id="publicThemeToggle" type="button" aria-label="Switch to dark mode" title="Toggle light/dark mode"><i class="bi bi-moon-stars"></i></button>
+            <th:block th:if="${currentUser == null}">
+                <a class="public-login-link" th:href="@{/login}">Login</a>
+                <a class="primary-button public-signup-link" th:href="@{/register}">Sign Up</a>
+            </th:block>
+            <a class="primary-button public-dashboard-link" th:if="${currentUser != null}" th:href="@{/dashboard}"><i class="bi bi-grid-1x2"></i>Dashboard</a>
+        </div>
+    </div>
+</header>
+
+<footer class="public-footer" th:fragment="publicFooter">
+    <div class="public-footer-inner">
+        <div class="public-footer-developer">
+            <span>DEVELOPED BY</span>
+            <strong>Safayet Ullah</strong>
+            <p>Department of CSE<br>Southeast University</p>
+        </div>
+        <div class="public-footer-contact">
+            <span>CONTACT</span>
+            <div class="public-contact-links">
+                <a href="https://wa.me/8801837945824" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Safayet Ullah">
+                    <img th:src="@{/images/whatsapp-logo.png}" src="/images/whatsapp-logo.png" alt="WhatsApp">
+                    <span><strong>WhatsApp</strong><small>+8801837945824</small></span>
+                </a>
+                <a href="https://www.facebook.com/Safayetullah.19" target="_blank" rel="noopener noreferrer" aria-label="Facebook profile">
+                    <img th:src="@{/images/facebook-logo.png}" src="/images/facebook-logo.png" alt="Facebook">
+                    <span><strong>Facebook</strong><small>Safayet Ullah</small></span>
+                </a>
+                <a href="https://www.linkedin.com/in/safayet-ullah-58ba12366" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">
+                    <img th:src="@{/images/linkedin-logo.png}" src="/images/linkedin-logo.png" alt="LinkedIn">
+                    <span><strong>LinkedIn</strong><small>Safayet Ullah</small></span>
+                </a>
+                <a href="mailto:safayetullah019@gmail.com" aria-label="Email Safayet Ullah">
+                    <span class="public-mail-icon"><img class="gmail-mark" th:src="@{/images/gmail-logo.svg}" src="/images/gmail-logo.svg" alt="Gmail" width="24" height="24"></span>
+                    <span><strong>Email</strong><small>safayetullah019@gmail.com</small></span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="public-footer-bottom">© 2026 EventFlow. All rights reserved.</div>
+  <script th:src="@{/js/event-image-fallback.js(v=20261011original2)}" src="/js/event-image-fallback.js?v=20261011"></script>
+</footer>
+
+
+<!-- V1 public navigation: deliberately matches the approved homepage, for every visitor role. -->
+<header class="v1-header" th:fragment="v1Nav(active)">
+  <div class="v1-container v1-header-inner">
+    <a class="v1-brand" th:href="@{/}" href="/" aria-label="EventFlow home"><img th:src="@{/images/eventflow-logo-original.png}" src="/images/eventflow-logo-original.png" alt="EventFlow"></a>
+    <nav class="v1-main-nav" aria-label="Main navigation">
+      <a th:href="@{/}" href="/" th:classappend="${active == 'home'} ? ' is-active' : ''">Home</a>
+      <a th:href="@{/events}" href="/events" th:classappend="${active == 'events'} ? ' is-active' : ''">Explore Events</a>
+      <a th:href="@{/home#about}" href="/home#about">About</a>
+    </nav>
+    <div class="v1-header-actions">
+      <a class="v1-nav-search" th:href="@{/events#v1-filters}" href="/events#v1-filters" title="Search events" aria-label="Search events">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.1"/><path d="m16.2 16.2 5.1 5.1"/></svg>
+      </a>
+      <th:block th:if="${currentUser == null}">
+        <a class="v1-login" th:href="@{/login}" th:classappend="${active == 'auth'} ? ' is-current' : ''">Login</a>
+        <a class="v1-signup" th:href="@{/register}">Sign Up</a>
+      </th:block>
+      <a class="v1-login" th:if="${currentUser != null}" th:href="@{/dashboard}">Dashboard</a>
+    </div>
+  </div>
+</header>
+</body>
+</html>

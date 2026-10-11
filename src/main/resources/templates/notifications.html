@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventFlow | Notifications</title>
+    <link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png(v='20260923final')}" href="/images/eventflow-favicon.png?v=20260923final">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css(v=20261011clean)}" href="/css/site.css?v=20261011clean">
+    <link rel="stylesheet" th:href="@{/css/workspace-final.css(v=20261011full)}" href="/css/workspace-final.css?v=20261011full">
+</head>
+<body class="ef-workspace">
+<div th:replace="~{fragments :: topbar}"></div>
+<div class="app-shell"><div th:replace="~{fragments :: sidebar('notifications')}"></div>
+<main class="app-main">
+    <section class="page-heading"><div><span class="section-kicker">ACTIVITY</span><h1>Notifications</h1><p>Registration activity and important event updates appear here.</p></div><form th:if="${unreadCount != null and unreadCount > 0}" th:action="@{/notifications/read-all}" method="post" data-loading><button class="secondary-button" type="submit"><i class="bi bi-check2-all"></i>Mark all read</button></form></section>
+    <section class="notification-page-card" th:if="${!#lists.isEmpty(notifications)}">
+        <a class="notification-page-item" th:each="notice : ${notifications}" th:classappend="${!notice.read} ? ' unread' : ''" th:href="@{'/notifications/' + ${notice.id} + '/open'}"><div class="notification-page-icon"><i class="bi bi-bell"></i></div><div class="notification-page-copy"><div><strong th:text="${notice.read ? 'Notification' : 'New notification'}">Notification</strong><small th:text="${@display.notificationTime(notice)}">Time</small></div><p th:text="${notice.message}">Message</p></div><i class="bi bi-chevron-right"></i></a>
+    </section>
+    <section class="large-empty" th:if="${#lists.isEmpty(notifications)}"><div class="empty-icon"><i class="bi bi-bell-slash"></i></div><h2>No notifications yet</h2><p>Important registration and event activity will appear here.</p></section>
+</main></div>
+<div th:replace="~{fragments :: toasts}"></div><script th:src="@{/js/site.js(v='20260923final')}" src="/js/site.js?v=20260923final"></script>
+
+<script th:src="@{/js/workspace-final.js(v=20261011clean)}" src="/js/workspace-final.js?v=20261011clean" defer></script>
+</body>
+</html>

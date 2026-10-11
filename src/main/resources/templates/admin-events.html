@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventFlow | Manage Events</title>
+    <link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png(v='20260923couponcontact1')}" href="/images/eventflow-favicon.png?v=20260923couponcontact1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css(v=20261011clean)}" href="/css/site.css?v=20261011clean">
+    <link rel="stylesheet" th:href="@{/css/workspace-final.css(v=20261011full)}" href="/css/workspace-final.css?v=20261011full">
+</head>
+<body class="ef-workspace">
+<div th:replace="~{fragments :: topbar}"></div>
+<div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('manage-events')}"></div>
+    <main class="app-main">
+        <section class="page-heading"><div><span class="section-kicker">ADMIN CONTROL</span><h1>Manage Events</h1><p>Review every event on the platform and make corrections when needed.</p></div></section>
+        <section class="table-card">
+            <div class="table-toolbar admin-event-toolbar">
+                <div class="table-search"><i class="bi bi-search"></i><input id="adminEventSearch" type="search" placeholder="Search event, organizer or location..."></div>
+                <select class="toolbar-select" id="adminEventCategoryFilter" aria-label="Filter by category"><option value="ALL">All categories</option><option th:each="category : ${categories}" th:value="${category}" th:text="${category}">Category</option></select>
+                <select class="toolbar-select compact-toolbar-select" id="adminEventPricingFilter" aria-label="Filter by pricing"><option value="ALL">Free &amp; Paid</option><option value="FREE">Free</option><option value="PAID">Paid</option></select>
+                <select class="toolbar-select compact-toolbar-select" id="adminEventStatusFilter" aria-label="Filter by status"><option value="ALL">All statuses</option><option value="UPCOMING">Upcoming</option><option value="COMPLETED">Completed</option></select>
+                <div class="table-count" id="adminEventCount" th:text="${#lists.size(events) + ' events'}">0 events</div>
+            </div>
+            <div class="data-table-wrap" th:if="${!#lists.isEmpty(events)}"><table class="data-table admin-event-table" id="adminEventTable"><thead><tr><th>Event</th><th>Organizer</th><th>Date</th><th>Registrations</th><th>Rating</th><th>Status</th><th class="actions-column">Actions</th></tr></thead><tbody>
+            <tr th:each="event : ${events}" th:with="efPaid=${@display.paid(event)},efStatus=${@display.status(event)}" th:attr="data-search=${event.title + ' ' + event.organizerName + ' ' + event.location},data-category=${event.category},data-pricing=${efPaid ? 'PAID' : 'FREE'},data-status=${efStatus}">
+                <td><div class="event-table-title"><img data-event-image th:attr="data-event-category=${event.category}" th:with="efListingImage=${@display.listingImageUrl(event)}" th:src="${efListingImage}" alt="" loading="lazy" decoding="async"><div><strong th:text="${event.title}">Event</strong><small th:text="${event.location}">Location</small><span class="table-pricing-label" th:classappend="${@display.paid(event)} ? ' paid' : ' free'" th:text="${@display.paid(event) ? @display.formattedBasePrice(event) : 'Free'}">Free</span></div></div></td>
+                <td th:text="${event.organizerName}">Organizer</td><td th:text="${@display.eventDate(event)}">Date</td><td th:text="${registrationCounts[event.id] + ' / ' + event.capacity}">0 / 100</td><td th:with="summary=${feedbackSummaries[event.id]}"><span class="table-rating" th:if="${summary != null and summary.totalReviews > 0}"><i class="bi bi-star-fill"></i><strong th:text="${#numbers.formatDecimal(summary.averageRating, 1, 1)}">4.8</strong><small th:text="${'(' + summary.totalReviews + ')'}">(0)</small></span><span class="table-rating empty" th:if="${summary == null or summary.totalReviews == 0}">—</span></td><td><span class="status-badge" th:text="${@display.status(event)}">UPCOMING</span></td>
+                <td class="action-cell"><div class="admin-event-actions"><a class="small-action-button" th:href="@{'/admin/events/' + ${event.id} + '/program'}" title="Manage tickets, schedule, speakers and sponsors" aria-label="Manage event setup"><i class="bi bi-sliders"></i></a><a class="small-action-button" th:if="${@display.status(event) != 'COMPLETED'}" th:href="@{'/admin/events/' + ${event.id} + '/edit'}" title="Edit event" aria-label="Edit event"><i class="bi bi-pencil"></i></a><form class="inline-form confirm-form" th:if="${@display.status(event) != 'COMPLETED'}" th:action="@{'/admin/events/' + ${event.id} + '/delete'}" method="post" th:attr="data-confirm-title='Delete ' + ${event.title} + '?',data-confirm='Registered participants will be notified and the event will be removed permanently.',data-confirm-action='Delete Event'"><button class="small-action-button danger-action" type="submit" title="Delete event" aria-label="Delete event"><i class="bi bi-trash3"></i></button></form></div></td>
+            </tr></tbody></table></div>
+            <div class="clean-empty" th:if="${#lists.isEmpty(events)}"><i class="bi bi-calendar2-x"></i><h3>No events found</h3></div>
+            <div class="clean-empty filtered-empty" id="adminEventEmpty"><i class="bi bi-search"></i><h3>No matching events</h3></div>
+        </section>
+    </main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div><div th:replace="~{fragments :: confirmModal}"></div><script th:src="@{/js/site.js(v='20260923statusfilter1')}" src="/js/site.js?v=20260923statusfilter1"></script>
+
+<script th:src="@{/js/workspace-final.js(v=20261011clean)}" src="/js/workspace-final.js?v=20261011clean" defer></script>
+</body>
+</html>

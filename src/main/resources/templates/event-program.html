@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'EventFlow | Program - ' + ${event.title}">EventFlow | Event Program</title>
+    <link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png(v='20260923finalgalleryanalytics')}" href="/images/eventflow-favicon.png?v=20260923finalgalleryanalytics">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css(v=20261011clean)}" href="/css/site.css?v=20261011clean">
+    <link rel="stylesheet" th:href="@{/css/workspace-final.css(v=20261011mediafix)}" href="/css/workspace-final.css?v=20261011mediafix">
+</head>
+<body class="ef-workspace">
+<div th:replace="~{fragments :: topbar}"></div>
+<div class="app-shell">
+    <th:block th:if="${programMode == 'admin'}"><div th:replace="~{fragments :: sidebar('manage-events')}"></div></th:block>
+    <th:block th:if="${programMode == 'organizer'}"><div th:replace="~{fragments :: sidebar('myevents')}"></div></th:block>
+    <main class="app-main">
+        <section class="page-heading program-page-heading">
+            <div>
+                <span class="section-kicker">EVENT SETUP</span>
+                <h1>Program, Tickets, Media & Partners</h1>
+                <p th:text="${programReadOnly ? 'Completed event history is read-only. Review tickets, schedule, speakers, gallery and sponsors.' : 'Manage ticket types, schedule, speakers, gallery and sponsors from one organized workspace.'}">Manage ticket types, schedule, speakers, gallery and sponsors from one organized workspace.</p>
+            </div>
+            <div class="program-heading-actions">
+                <a class="secondary-button" th:href="${backUrl}"><i class="bi bi-arrow-left"></i>Back to Events</a>
+                <a class="primary-button" th:href="@{'/events/' + ${event.id}}"><i class="bi bi-eye"></i>Public View</a>
+            </div>
+        </section>
+
+        <div class="profile-note" th:if="${programReadOnly}"><i class="bi bi-lock-fill"></i><p>This event is completed. Its setup is preserved as history and cannot be edited or deleted.</p></div>
+
+        <section class="program-event-banner">
+            <img data-event-image th:attr="data-event-category=${event.category}" th:with="efListingImage=${@display.listingImageUrl(event)}" th:src="${efListingImage}" alt="Event image">
+            <div class="program-event-banner-copy">
+                <span class="category-label" th:text="${event.category}">Technology</span>
+                <h2 th:text="${event.title}">Event title</h2>
+                <div class="program-event-meta">
+                    <span><i class="bi bi-calendar3"></i><span th:text="${@display.eventDate(event) + ' · ' + @display.eventTime(event)}">Date</span></span>
+                    <span><i class="bi bi-geo-alt"></i><span th:text="${event.location}">Location</span></span>
+                </div>
+            </div>
+            <div class="program-event-stats">
+                <div><strong th:text="${#lists.size(ticketTypes)}">0</strong><span>Ticket Types</span></div>
+                <div><strong th:text="${#lists.size(schedule)}">0</strong><span>Sessions</span></div>
+                <div><strong th:text="${#lists.size(speakers)}">0</strong><span>Speakers</span></div>
+                <div><strong th:text="${#lists.size(sponsors)}">0</strong><span>Sponsors</span></div>
+                <div><strong th:text="${#lists.size(gallery)}">0</strong><span>Gallery</span></div>
+            </div>
+        </section>
+
+        <section class="program-section" id="ticketing">
+            <div class="program-section-head">
+                <div><span class="section-kicker">TICKETING</span><h2>Ticket Types</h2><p>Create General, VIP, Student or other ticket options with separate seat limits.</p></div>
+                <span class="program-count-badge pricing-badge" th:classappend="${@display.paid(event)} ? ' paid' : ' free'" th:text="${@display.paid(event) ? 'PAID EVENT · ' + @display.formattedBasePrice(event) : 'FREE EVENT'}">FREE EVENT</span>
+            </div>
+
+            <div class="ticketing-overview">
+                <div><span>Event Capacity</span><strong th:text="${event.capacity}">100</strong></div>
+                <div><span>Allocated to Ticket Types</span><strong th:text="${allocatedTicketCapacity}">0</strong></div>
+                <div><span>Unallocated Seats</span><strong th:text="${event.capacity - allocatedTicketCapacity}">100</strong></div>
+                <div><span>Base Admission</span><strong th:text="${@display.formattedBasePrice(event)}">Free</strong></div>
+            </div>
+
+            <div class="program-builder-layout ticket-builder-layout">
+                <form th:if="${!programReadOnly}" class="program-form-card" th:action="${programBase + '/tickets'}" method="post" data-loading>
+                    <div class="program-form-title"><div class="program-form-icon"><i class="bi bi-ticket-perforated"></i></div><div><h3>Add ticket type</h3><p>Allocate a portion of the event capacity to this ticket.</p></div></div>
+                    <div class="program-form-grid">
+                        <div class="field-group full-width"><label for="ticketName">Ticket name</label><input id="ticketName" name="name" type="text" minlength="2" maxlength="60" required placeholder="e.g. VIP Pass"></div>
+                        <div class="field-group"><label for="ticketCapacity">Capacity</label><input id="ticketCapacity" name="capacity" type="number" min="1" th:attr="max=${event.capacity}" required placeholder="50"></div>
+                        <div class="field-group" th:if="${@display.paid(event)}"><label for="ticketPrice">Price (BDT)</label><div class="money-input-wrap compact"><span>৳</span><input id="ticketPrice" name="price" type="number" min="0.01" step="0.01" max="10000000" required th:value="${@display.basePrice(event)}"></div></div>
+                        <input th:if="${!(@display.paid(event))}" type="hidden" name="price" value="0">
+                        <div class="field-group"><label for="ticketOrder">Display order</label><input id="ticketOrder" name="sortOrder" type="number" min="0" max="999" value="0"></div>
+                        <div class="field-group ticket-active-field"><label>Availability</label><label class="compact-check"><input name="active" type="checkbox" value="true" checked><span>Active for registration</span></label></div>
+                        <div class="field-group full-width"><label for="ticketDescription">Short description <span class="optional-label">Optional</span></label><textarea id="ticketDescription" name="description" rows="3" maxlength="250" placeholder="What is included with this ticket?"></textarea></div>
+                    </div>
+                    <button class="primary-button program-submit" type="submit" th:disabled="${allocatedTicketCapacity >= event.capacity}"><i class="bi bi-plus-lg"></i>Add Ticket Type</button>
+                </form>
+
+                <div class="ticket-type-list">
+                    <article class="ticket-type-card" th:each="ticket : ${ticketTypes}">
+                        <div class="ticket-type-accent"></div>
+                        <div class="ticket-type-card-copy">
+                            <div class="ticket-type-card-head">
+                                <div><span class="ticket-state" th:classappend="${ticket.active} ? ' active' : ' inactive'" th:text="${ticket.active ? 'ACTIVE' : 'PAUSED'}">ACTIVE</span><h3 th:text="${ticket.name}">VIP Pass</h3></div>
+                                <div class="program-item-actions" th:if="${!programReadOnly}"><button class="small-action-button program-edit-toggle" type="button" title="Edit ticket type"><i class="bi bi-pencil"></i></button><form class="inline-form confirm-form" th:action="${programBase + '/tickets/' + ticket.id + '/delete'}" method="post" data-confirm-title="Remove this ticket type?" data-confirm="Ticket types with existing bookings cannot be deleted. You can disable them instead." data-confirm-action="Remove Ticket"><button class="small-action-button danger-action" type="submit" title="Remove ticket"><i class="bi bi-trash3"></i></button></form></div>
+                            </div>
+                            <div class="ticket-price" th:text="${@display.ticketPrice(ticket)}">৳500</div>
+                            <p th:if="${ticket.description != null and !ticket.description.isBlank()}" th:text="${ticket.description}">Description</p>
+                            <div class="ticket-capacity-row"><span><i class="bi bi-people"></i><strong th:text="${ticketRegistrationCounts[ticket.id]}">0</strong> booked</span><span th:text="${ticket.capacity + ' seats'}">50 seats</span></div>
+                            <div class="progress-track ticket-progress"><span th:style="|width:${ticket.capacity > 0 ? (ticketRegistrationCounts[ticket.id] * 100 / ticket.capacity) : 0}%|"></span></div>
+                            <form th:if="${!programReadOnly}" class="program-inline-editor ticket-inline-editor" th:action="${programBase + '/tickets/' + ticket.id + '/edit'}" method="post" hidden data-loading>
+                                <div class="program-form-grid compact">
+                                    <div class="field-group full-width"><label>Ticket name</label><input name="name" type="text" minlength="2" maxlength="60" required th:value="${ticket.name}"></div>
+                                    <div class="field-group"><label>Capacity</label><input name="capacity" type="number" min="1" th:attr="max=${event.capacity}" required th:value="${ticket.capacity}"></div>
+                                    <div class="field-group" th:if="${@display.paid(event)}"><label>Price (BDT)</label><div class="money-input-wrap compact"><span>৳</span><input name="price" type="number" min="0.01" step="0.01" max="10000000" required th:value="${ticket.price}"></div></div>
+                                    <input th:if="${!(@display.paid(event))}" type="hidden" name="price" value="0">
+                                    <div class="field-group"><label>Display order</label><input name="sortOrder" type="number" min="0" max="999" th:value="${ticket.sortOrder}"></div>
+                                    <div class="field-group ticket-active-field"><label>Availability</label><label class="compact-check"><input name="active" type="checkbox" value="true" th:checked="${ticket.active}"><span>Active for registration</span></label></div>
+                                    <div class="field-group full-width"><label>Description</label><textarea name="description" rows="3" maxlength="250" th:text="${ticket.description}"></textarea></div>
+                                </div>
+                                <div class="program-editor-actions"><button class="secondary-button program-edit-cancel" type="button">Cancel</button><button class="primary-button" type="submit"><i class="bi bi-check2"></i>Save Ticket</button></div>
+                            </form>
+                        </div>
+                    </article>
+                    <div class="program-empty wide" th:if="${#lists.isEmpty(ticketTypes)}"><div><i class="bi bi-ticket-detailed"></i></div><h3>Using General Admission</h3><p>No custom ticket types yet. Participants use the event's base admission and overall capacity until you add ticket types.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="program-section" id="agenda">
+            <div class="program-section-head">
+                <div><span class="section-kicker">AGENDA</span><h2>Event Schedule</h2><p>Add sessions in the order participants will experience them.</p></div>
+                <span class="program-count-badge" th:text="${#lists.size(schedule) + (#lists.size(schedule) == 1 ? ' session' : ' sessions')}">0 sessions</span>
+            </div>
+
+            <div class="program-builder-layout">
+                <form th:if="${!programReadOnly}" class="program-form-card" th:action="${programBase + '/schedule'}" method="post" data-loading>
+                    <div class="program-form-title"><div class="program-form-icon"><i class="bi bi-calendar2-plus"></i></div><div><h3>Add schedule session</h3><p>Create one agenda item at a time.</p></div></div>
+                    <div class="program-form-grid">
+                        <div class="field-group full-width"><label for="scheduleTitle">Session title</label><input id="scheduleTitle" name="title" type="text" minlength="3" maxlength="80" required placeholder="e.g. Opening Keynote"></div>
+                        <div class="field-group"><label for="scheduleStart">Start time</label><div class="event-picker-field compact-picker"><input class="program-time-picker" id="scheduleStart" name="startTime" type="text" autocomplete="off" readonly required placeholder="Select start time"><span class="program-time-icon"><i class="bi bi-clock"></i></span></div></div>
+                        <div class="field-group"><label for="scheduleEnd">End time</label><div class="event-picker-field compact-picker"><input class="program-time-picker" id="scheduleEnd" name="endTime" type="text" autocomplete="off" readonly required placeholder="Select end time"><span class="program-time-icon"><i class="bi bi-clock"></i></span></div></div>
+                        <div class="field-group full-width"><label for="scheduleLocation">Room / location <span class="optional-label">Optional</span></label><input id="scheduleLocation" name="location" type="text" maxlength="100" placeholder="e.g. Main Auditorium"></div>
+                        <div class="field-group full-width"><label for="scheduleSpeaker">Speaker <span class="optional-label">Optional</span></label><select id="scheduleSpeaker" name="speakerId"><option value="">No speaker assigned</option><option th:each="speaker : ${speakers}" th:value="${speaker.id}" th:text="${speaker.name}">Speaker</option></select></div>
+                        <div class="field-group full-width"><label for="scheduleDescription">Short description <span class="optional-label">Optional</span></label><textarea id="scheduleDescription" name="description" rows="3" maxlength="400" placeholder="What happens during this session?"></textarea></div>
+                    </div>
+                    <button class="primary-button program-submit" type="submit"><i class="bi bi-plus-lg"></i>Add Session</button>
+                </form>
+
+                <div class="program-timeline-card">
+                    <div class="program-timeline" th:if="${!#lists.isEmpty(schedule)}">
+                        <article class="program-timeline-item" th:each="item,iter : ${schedule}">
+                            <div class="program-time-block"><strong th:text="${@display.scheduleStart(item)}">09:00 AM</strong><span th:text="${@display.scheduleEnd(item)}">10:00 AM</span></div>
+                            <div class="program-timeline-marker"><span></span></div>
+                            <div class="program-session-content">
+                                <div class="program-session-top"><div><span class="program-session-number" th:text="${'SESSION ' + (iter.index + 1)}">SESSION 1</span><h3 th:text="${item.title}">Session title</h3></div><div class="program-item-actions" th:if="${!programReadOnly}"><button class="small-action-button program-edit-toggle" type="button" title="Edit session"><i class="bi bi-pencil"></i></button><form class="inline-form confirm-form" th:action="${programBase + '/schedule/' + item.id + '/delete'}" method="post" data-confirm-title="Remove this schedule session?" data-confirm="The session will be removed from the public event agenda." data-confirm-action="Remove Session"><button class="small-action-button danger-action" type="submit" title="Remove session"><i class="bi bi-trash3"></i></button></form></div></div>
+                                <div class="program-session-meta">
+                                    <span th:if="${item.location != null and !item.location.isBlank()}"><i class="bi bi-geo-alt"></i><span th:text="${item.location}">Room</span></span>
+                                    <span th:if="${item.speakerId != null and speakerMap[item.speakerId] != null}"><i class="bi bi-person-mic"></i><span th:text="${speakerMap[item.speakerId].name}">Speaker</span></span>
+                                </div>
+                                <p th:if="${item.description != null and !item.description.isBlank()}" th:text="${item.description}">Session description</p>
+                                <form th:if="${!programReadOnly}" class="program-inline-editor" th:action="${programBase + '/schedule/' + item.id + '/edit'}" method="post" hidden data-loading>
+                                    <div class="program-form-grid compact">
+                                        <div class="field-group full-width"><label>Session title</label><input name="title" type="text" minlength="3" maxlength="80" required th:value="${item.title}"></div>
+                                        <div class="field-group"><label>Start time</label><div class="event-picker-field compact-picker"><input class="program-time-picker" name="startTime" type="text" autocomplete="off" readonly required th:value="${item.startTime}"><span class="program-time-icon"><i class="bi bi-clock"></i></span></div></div>
+                                        <div class="field-group"><label>End time</label><div class="event-picker-field compact-picker"><input class="program-time-picker" name="endTime" type="text" autocomplete="off" readonly required th:value="${item.endTime}"><span class="program-time-icon"><i class="bi bi-clock"></i></span></div></div>
+                                        <div class="field-group full-width"><label>Room / location</label><input name="location" type="text" maxlength="100" th:value="${item.location}"></div>
+                                        <div class="field-group full-width"><label>Speaker</label><select name="speakerId"><option value="">No speaker assigned</option><option th:each="speaker : ${speakers}" th:value="${speaker.id}" th:text="${speaker.name}" th:selected="${speaker.id == item.speakerId}">Speaker</option></select></div>
+                                        <div class="field-group full-width"><label>Short description</label><textarea name="description" rows="3" maxlength="400" th:text="${item.description}"></textarea></div>
+                                    </div>
+                                    <div class="program-editor-actions"><button class="secondary-button program-edit-cancel" type="button">Cancel</button><button class="primary-button" type="submit"><i class="bi bi-check2"></i>Save Session</button></div>
+                                </form>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="program-empty" th:if="${#lists.isEmpty(schedule)}"><div><i class="bi bi-calendar2-week"></i></div><h3>No schedule yet</h3><p>Add the first session and the event timeline will appear here.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="program-section" id="speakers">
+            <div class="program-section-head">
+                <div><span class="section-kicker">SPEAKERS</span><h2>Event Speakers</h2><p>Add the people participants will see in the event program.</p></div>
+                <span class="program-count-badge" th:text="${#lists.size(speakers) + (#lists.size(speakers) == 1 ? ' speaker' : ' speakers')}">0 speakers</span>
+            </div>
+
+            <form th:if="${!programReadOnly}" class="program-form-card speaker-add-form" th:action="${programBase + '/speakers'}" method="post" enctype="multipart/form-data" data-loading>
+                <div class="program-form-title"><div class="program-form-icon"><i class="bi bi-person-plus"></i></div><div><h3>Add speaker</h3><p>Provide clear professional information for the public event page.</p></div></div>
+                <div class="speaker-form-layout">
+                    <label class="speaker-photo-upload">
+                        <img class="speaker-photo-preview" src="/images/default-avatar.png" alt="Speaker preview">
+                        <span><i class="bi bi-camera"></i>Choose Photo</span>
+                        <input class="speaker-photo-input" name="photo" type="file" accept="image/jpeg,image/png,image/webp">
+                    </label>
+                    <div class="program-form-grid speaker-fields">
+                        <div class="field-group"><label for="speakerName">Full name</label><input id="speakerName" name="name" type="text" minlength="2" maxlength="80" required placeholder="e.g. Dr. Ayesha Rahman"></div>
+                        <div class="field-group"><label for="speakerDesignation">Designation</label><input id="speakerDesignation" name="designation" type="text" minlength="2" maxlength="100" required placeholder="e.g. AI Researcher"></div>
+                        <div class="field-group full-width"><label for="speakerOrganization">Organization <span class="optional-label">Optional</span></label><input id="speakerOrganization" name="organization" type="text" maxlength="120" placeholder="e.g. Open Research Lab"></div>
+                        <div class="field-group full-width"><label for="speakerBio">Short bio <span class="optional-label">Optional</span></label><textarea id="speakerBio" name="bio" rows="3" maxlength="700" placeholder="A short professional introduction..."></textarea></div>
+                    </div>
+                </div>
+                <button class="primary-button program-submit" type="submit"><i class="bi bi-person-plus"></i>Add Speaker</button>
+            </form>
+
+            <div class="program-speaker-grid" th:if="${!#lists.isEmpty(speakers)}">
+                <article class="program-speaker-card" th:each="speaker : ${speakers}">
+                    <div class="program-speaker-photo"><img th:src="${speaker.photoUrl != null and !speaker.photoUrl.isBlank() ? speaker.photoUrl : '/images/default-avatar.png'}" src="/images/default-avatar.png" alt="Speaker photo" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/default-avatar.png'"></div>
+                    <div class="program-speaker-copy">
+                        <div class="program-speaker-head"><div><h3 th:text="${speaker.name}">Speaker Name</h3><strong th:text="${speaker.designation}">Designation</strong><span th:if="${speaker.organization != null and !speaker.organization.isBlank()}" th:text="${speaker.organization}">Organization</span></div><div class="program-item-actions" th:if="${!programReadOnly}"><button class="small-action-button program-edit-toggle" type="button" title="Edit speaker"><i class="bi bi-pencil"></i></button><form class="inline-form confirm-form" th:action="${programBase + '/speakers/' + speaker.id + '/delete'}" method="post" data-confirm-title="Remove this speaker?" data-confirm="The speaker will be removed from this event. Any linked agenda session will remain without an assigned speaker." data-confirm-action="Remove Speaker"><button class="small-action-button danger-action" type="submit" title="Remove speaker"><i class="bi bi-trash3"></i></button></form></div></div>
+                        <p th:if="${speaker.bio != null and !speaker.bio.isBlank()}" th:text="${speaker.bio}">Speaker bio</p>
+                        <p class="speaker-bio-empty" th:if="${speaker.bio == null or speaker.bio.isBlank()}">No biography added yet.</p>
+                        <form th:if="${!programReadOnly}" class="program-inline-editor speaker-inline-editor" th:action="${programBase + '/speakers/' + speaker.id + '/edit'}" method="post" enctype="multipart/form-data" hidden data-loading>
+                            <div class="program-form-grid compact">
+                                <div class="field-group"><label>Full name</label><input name="name" type="text" minlength="2" maxlength="80" required th:value="${speaker.name}"></div>
+                                <div class="field-group"><label>Designation</label><input name="designation" type="text" minlength="2" maxlength="100" required th:value="${speaker.designation}"></div>
+                                <div class="field-group full-width"><label>Organization</label><input name="organization" type="text" maxlength="120" th:value="${speaker.organization}"></div>
+                                <div class="field-group full-width"><label>Bio</label><textarea name="bio" rows="3" maxlength="700" th:text="${speaker.bio}"></textarea></div>
+                                <div class="field-group full-width"><label>Replace photo <span class="optional-label">Optional</span></label><input name="photo" type="file" accept="image/jpeg,image/png,image/webp"></div>
+                            </div>
+                            <div class="program-editor-actions"><button class="secondary-button program-edit-cancel" type="button">Cancel</button><button class="primary-button" type="submit"><i class="bi bi-check2"></i>Save Speaker</button></div>
+                        </form>
+                    </div>
+                </article>
+            </div>
+            <div class="program-empty wide" th:if="${#lists.isEmpty(speakers)}"><div><i class="bi bi-person-video3"></i></div><h3>No speakers yet</h3><p>Add speaker profiles to make the event page more informative and professional.</p></div>
+        </section>
+
+
+        <section class="program-section" id="gallery">
+            <div class="program-section-head">
+                <div><span class="section-kicker">MEDIA</span><h2>Event Gallery</h2><p>Add real event photos for participants to explore on the public event page.</p></div>
+                <span class="program-count-badge" th:text="${#lists.size(gallery) + (#lists.size(gallery) == 1 ? ' photo' : ' photos')}">0 photos</span>
+            </div>
+
+            <form th:if="${!programReadOnly}" class="program-form-card gallery-upload-form" th:action="${programBase + '/gallery'}" method="post" enctype="multipart/form-data" data-loading>
+                <div class="program-form-title"><div class="program-form-icon"><i class="bi bi-images"></i></div><div><h3>Add gallery photo</h3><p>JPG, PNG or WEBP. Maximum 2 MB per image, up to 10 images per event.</p></div></div>
+                <div class="gallery-upload-layout">
+                    <label class="gallery-image-upload">
+                        <div class="gallery-upload-placeholder"><i class="bi bi-image"></i><strong>Choose Photo</strong><span>Preview before upload</span></div>
+                        <img class="gallery-upload-preview" alt="Gallery preview" hidden>
+                        <input class="gallery-image-input" name="image" type="file" accept="image/jpeg,image/png,image/webp" required>
+                    </label>
+                    <div class="program-form-grid">
+                        <div class="field-group full-width"><label for="galleryCaption">Caption <span class="optional-label">Optional</span></label><input id="galleryCaption" name="caption" type="text" maxlength="160" placeholder="e.g. Opening keynote session"></div>
+                        <div class="field-group"><label for="galleryOrder">Display order</label><input id="galleryOrder" name="sortOrder" type="number" min="0" max="999" value="0"></div>
+                    </div>
+                </div>
+                <button class="primary-button program-submit" type="submit" th:disabled="${#lists.size(gallery) >= 10}"><i class="bi bi-cloud-arrow-up"></i><span th:text="${#lists.size(gallery) >= 10 ? 'Gallery Limit Reached' : 'Add to Gallery'}">Add to Gallery</span></button>
+            </form>
+
+            <div class="program-gallery-grid" th:if="${!#lists.isEmpty(gallery)}">
+                <article class="program-gallery-card" th:each="photo : ${gallery}">
+                    <img th:src="${photo.imageUrl != null and !photo.imageUrl.isBlank() ? photo.imageUrl : '/images/event-visual.png'}" src="/images/event-visual.png" alt="Event gallery photo" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/event-visual.png'">
+                    <div class="gallery-card-copy">
+                        <div class="gallery-card-head">
+                            <div><span class="gallery-order-label" th:text="${'ORDER ' + photo.sortOrder}">ORDER 0</span><h3 th:text="${photo.caption != null and !photo.caption.isBlank() ? photo.caption : 'Event photo'}">Event photo</h3></div>
+                            <div class="program-item-actions" th:if="${!programReadOnly}">
+                                <button class="small-action-button program-edit-toggle" type="button" title="Edit gallery details"><i class="bi bi-pencil"></i></button>
+                                <form class="inline-form confirm-form" th:action="${programBase + '/gallery/' + photo.id + '/delete'}" method="post" data-confirm-title="Remove this gallery photo?" data-confirm="This image will be permanently removed from the event gallery." data-confirm-action="Remove Photo"><button class="small-action-button danger-action" type="submit" title="Remove gallery photo"><i class="bi bi-trash3"></i></button></form>
+                            </div>
+                        </div>
+                        <form th:if="${!programReadOnly}" class="program-inline-editor gallery-inline-editor" th:action="${programBase + '/gallery/' + photo.id + '/edit'}" method="post" hidden data-loading>
+                            <div class="program-form-grid compact">
+                                <div class="field-group full-width"><label>Caption</label><input name="caption" type="text" maxlength="160" th:value="${photo.caption}"></div>
+                                <div class="field-group"><label>Display order</label><input name="sortOrder" type="number" min="0" max="999" th:value="${photo.sortOrder}"></div>
+                            </div>
+                            <div class="program-editor-actions"><button class="secondary-button program-edit-cancel" type="button">Cancel</button><button class="primary-button" type="submit"><i class="bi bi-check2"></i>Save Details</button></div>
+                        </form>
+                    </div>
+                </article>
+            </div>
+            <div class="program-empty wide" th:if="${#lists.isEmpty(gallery)}"><div><i class="bi bi-images"></i></div><h3>No gallery photos yet</h3><p>Add real event photos to make the public event page more visual and professional.</p></div>
+        </section>
+
+        <section class="program-section" id="sponsors">
+            <div class="program-section-head">
+                <div><span class="section-kicker">PARTNERS</span><h2>Event Sponsors</h2><p>Showcase organizations supporting the event with clear sponsor levels and logos.</p></div>
+                <span class="program-count-badge" th:text="${#lists.size(sponsors) + (#lists.size(sponsors) == 1 ? ' sponsor' : ' sponsors')}">0 sponsors</span>
+            </div>
+
+            <form th:if="${!programReadOnly}" class="program-form-card sponsor-add-form" th:action="${programBase + '/sponsors'}" method="post" enctype="multipart/form-data" data-loading>
+                <div class="program-form-title"><div class="program-form-icon"><i class="bi bi-award"></i></div><div><h3>Add sponsor</h3><p>Use a clean logo and optional website link for the public event page.</p></div></div>
+                <div class="sponsor-form-layout">
+                    <label class="sponsor-logo-upload">
+                        <div class="sponsor-logo-placeholder"><i class="bi bi-building"></i></div>
+                        <img class="sponsor-logo-preview" alt="Sponsor logo preview" hidden>
+                        <span><i class="bi bi-cloud-arrow-up"></i>Choose Logo</span>
+                        <input class="sponsor-logo-input" name="logo" type="file" accept="image/jpeg,image/png,image/webp">
+                    </label>
+                    <div class="program-form-grid">
+                        <div class="field-group"><label for="sponsorName">Sponsor name</label><input id="sponsorName" name="name" type="text" minlength="2" maxlength="100" required placeholder="e.g. Acme Technologies"></div>
+                        <div class="field-group"><label for="sponsorLevel">Sponsor level</label><select id="sponsorLevel" name="level" required><option value="TITLE">Title Sponsor</option><option value="GOLD">Gold Sponsor</option><option value="SILVER">Silver Sponsor</option><option value="BRONZE">Bronze Sponsor</option><option value="PARTNER">Partner</option></select></div>
+                        <div class="field-group full-width"><label for="sponsorWebsite">Website <span class="optional-label">Optional</span></label><input id="sponsorWebsite" name="website" type="url" maxlength="240" placeholder="https://example.com"></div>
+                        <div class="field-group"><label for="sponsorOrder">Display order</label><input id="sponsorOrder" name="sortOrder" type="number" min="0" max="999" value="0"></div>
+                        <div class="field-group full-width"><label for="sponsorDescription">Short description <span class="optional-label">Optional</span></label><textarea id="sponsorDescription" name="description" rows="3" maxlength="400" placeholder="How this partner supports the event..."></textarea></div>
+                    </div>
+                </div>
+                <button class="primary-button program-submit" type="submit"><i class="bi bi-plus-lg"></i>Add Sponsor</button>
+            </form>
+
+            <div class="program-sponsor-grid" th:if="${!#lists.isEmpty(sponsors)}">
+                <article class="program-sponsor-card" th:each="sponsor : ${sponsors}">
+                    <div class="program-sponsor-logo">
+                        <img th:if="${sponsor.logoUrl != null and !sponsor.logoUrl.isBlank()}" th:src="${sponsor.logoUrl}" alt="Sponsor logo" loading="lazy" decoding="async" onerror="this.onerror=null;this.hidden=true;this.style.display='none';this.nextElementSibling.hidden=false;this.nextElementSibling.style.display='inline-flex'">
+                        <i th:if="${sponsor.logoUrl != null and !sponsor.logoUrl.isBlank()}" class="bi bi-building sponsor-logo-fallback" hidden style="display:none"></i>
+                        <i th:if="${sponsor.logoUrl == null or sponsor.logoUrl.isBlank()}" class="bi bi-building sponsor-logo-fallback"></i>
+                    </div>
+                    <div class="sponsor-card-copy">
+                        <div class="program-speaker-head"><div><span class="sponsor-level" th:classappend="${' level-' + #strings.toLowerCase(sponsor.level)}" th:text="${@display.sponsorLevel(sponsor)}">Gold Sponsor</span><h3 th:text="${sponsor.name}">Sponsor</h3><a th:if="${sponsor.website != null and !sponsor.website.isBlank()}" th:href="${sponsor.website}" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> Visit website</a></div><div class="program-item-actions" th:if="${!programReadOnly}"><button class="small-action-button program-edit-toggle" type="button" title="Edit sponsor"><i class="bi bi-pencil"></i></button><form class="inline-form confirm-form" th:action="${programBase + '/sponsors/' + sponsor.id + '/delete'}" method="post" data-confirm-title="Remove this sponsor?" data-confirm="The sponsor will be removed from the public event page." data-confirm-action="Remove Sponsor"><button class="small-action-button danger-action" type="submit" title="Remove sponsor"><i class="bi bi-trash3"></i></button></form></div></div>
+                        <p th:if="${sponsor.description != null and !sponsor.description.isBlank()}" th:text="${sponsor.description}">Description</p>
+                        <form th:if="${!programReadOnly}" class="program-inline-editor sponsor-inline-editor" th:action="${programBase + '/sponsors/' + sponsor.id + '/edit'}" method="post" enctype="multipart/form-data" hidden data-loading>
+                            <div class="program-form-grid compact">
+                                <div class="field-group"><label>Sponsor name</label><input name="name" type="text" minlength="2" maxlength="100" required th:value="${sponsor.name}"></div>
+                                <div class="field-group"><label>Sponsor level</label><select name="level" required><option value="TITLE" th:selected="${sponsor.level == 'TITLE'}">Title Sponsor</option><option value="GOLD" th:selected="${sponsor.level == 'GOLD'}">Gold Sponsor</option><option value="SILVER" th:selected="${sponsor.level == 'SILVER'}">Silver Sponsor</option><option value="BRONZE" th:selected="${sponsor.level == 'BRONZE'}">Bronze Sponsor</option><option value="PARTNER" th:selected="${sponsor.level == 'PARTNER'}">Partner</option></select></div>
+                                <div class="field-group full-width"><label>Website</label><input name="website" type="url" maxlength="240" th:value="${sponsor.website}"></div>
+                                <div class="field-group"><label>Display order</label><input name="sortOrder" type="number" min="0" max="999" th:value="${sponsor.sortOrder}"></div>
+                                <div class="field-group full-width"><label>Description</label><textarea name="description" rows="3" maxlength="400" th:text="${sponsor.description}"></textarea></div>
+                                <div class="field-group full-width"><label>Replace logo <span class="optional-label">Optional</span></label><input name="logo" type="file" accept="image/jpeg,image/png,image/webp"></div>
+                            </div>
+                            <div class="program-editor-actions"><button class="secondary-button program-edit-cancel" type="button">Cancel</button><button class="primary-button" type="submit"><i class="bi bi-check2"></i>Save Sponsor</button></div>
+                        </form>
+                    </div>
+                </article>
+            </div>
+            <div class="program-empty wide" th:if="${#lists.isEmpty(sponsors)}"><div><i class="bi bi-award"></i></div><h3>No sponsors yet</h3><p>Add sponsors and partners when the event has supporting organizations to showcase.</p></div>
+        </section>
+    </main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div><div th:replace="~{fragments :: confirmModal}"></div>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script th:src="@{/js/site.js(v='20261011mediafix')}" src="/js/site.js?v=20261011mediafix"></script>
+
+<script th:src="@{/js/workspace-final.js(v=20261011clean)}" src="/js/workspace-final.js?v=20261011clean" defer></script>
+</body>
+</html>

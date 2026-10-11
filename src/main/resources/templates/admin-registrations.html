@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#ffffff">
+    <title>EventFlow | Booking Management</title>
+    <link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png(v='20260923ui6')}" href="/images/eventflow-favicon.png?v=20260923ui6">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css(v=20261011clean)}" href="/css/site.css?v=20261011clean">
+    <link rel="stylesheet" th:href="@{/css/workspace-final.css(v=20261011full)}" href="/css/workspace-final.css?v=20261011full">
+</head>
+<body class="ef-workspace">
+<div th:replace="~{fragments :: topbar}"></div>
+<div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('bookings')}"></div>
+    <main class="app-main">
+        <section class="page-heading">
+            <div><span class="section-kicker">ADMIN CONTROL</span><h1>Booking Management</h1><p>Search, filter and manage every participant booking across EventFlow.</p></div>
+        </section>
+
+        <section class="operations-metric-grid">
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-ticket-perforated"></i></span><div><small>Total Bookings</small><strong th:text="${#lists.size(registrations)}">0</strong><span>all registrations</span></div></article>
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-calendar2-event"></i></span><div><small>Upcoming</small><strong th:text="${upcomingBookingCount}">0</strong><span>active event bookings</span></div></article>
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-check2-circle"></i></span><div><small>Completed</small><strong th:text="${completedBookingCount}">0</strong><span>past event bookings</span></div></article>
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-people"></i></span><div><small>Participants</small><strong th:text="${uniqueParticipantCount}">0</strong><span>unique attendees</span></div></article>
+        </section>
+
+        <section class="table-card operations-table-card" data-smart-table data-row-label="booking" data-row-label-plural="bookings">
+            <div class="operations-toolbar">
+                <label class="table-search"><i class="bi bi-search"></i><input data-table-search type="search" placeholder="Search participant, email, event or location..."></label>
+                <select class="toolbar-select" data-table-filter="status" aria-label="Filter by event status">
+                    <option value="ALL">All statuses</option><option value="UPCOMING">Upcoming</option><option value="COMPLETED">Completed</option>
+                </select>
+                <select class="toolbar-select event-filter-select" data-table-filter="event" aria-label="Filter by event">
+                    <option value="ALL">All events</option>
+                    <option th:each="event : ${events}" th:value="${event.id}" th:selected="${selectedEventId eq event.id}" th:text="${event.title}">Event</option>
+                </select>
+                <select class="toolbar-select compact-toolbar-select" data-table-filter="pricing" aria-label="Filter by pricing"><option value="ALL">Free &amp; Paid</option><option value="FREE">Free</option><option value="PAID">Paid</option></select>
+                <div class="table-count" data-table-count th:text="${#lists.size(registrations) + ' bookings'}">0 bookings</div>
+            </div>
+
+            <div class="data-table-wrap" th:if="${!#lists.isEmpty(registrations)}">
+                <table class="data-table operations-data-table">
+                    <thead><tr><th>Participant</th><th>Event</th><th>Event Date</th><th>Ticket</th><th>Booked On</th><th>Status</th><th class="actions-column">Action</th></tr></thead>
+                    <tbody data-table-body>
+                    <tr th:each="registration : ${registrations}"
+                        th:with="event=${eventMap[registration.eventId]},efTicketName=${@display.ticketName(registration)},efStatus=${@display.status(event)},efPaid=${@display.paid(event)}"
+                        th:attr="data-search=${registration.participantName + ' ' + registration.participantEmail + ' ' + (event != null ? event.title + ' ' + event.location : '') + ' ' + efTicketName + ' ' + (registration.couponCode != null ? registration.couponCode : '')},data-status=${event != null ? efStatus : 'UNKNOWN'},data-event=${registration.eventId},data-pricing=${event != null ? (efPaid ? 'PAID' : 'FREE') : 'UNKNOWN'}">
+                        <td><div class="table-user"><img loading="lazy" class="avatar avatar-image" th:src="${participantMap[registration.participantId] != null and participantMap[registration.participantId].profileImageUrl != null ? participantMap[registration.participantId].profileImageUrl : '/images/default-avatar.png'}" src="/images/default-avatar.png" alt="Profile picture"><div><strong th:text="${registration.participantName}">Name</strong><small th:text="${registration.participantEmail}">email</small></div></div></td>
+                        <td><div class="booking-event-cell"><strong th:text="${event != null ? event.title : 'Deleted event'}">Event</strong><small th:if="${event != null}"><i class="bi bi-geo-alt"></i><span th:text="${event.location}">Location</span></small></div></td>
+                        <td><div class="booking-date-cell" th:if="${event != null}"><strong th:text="${@display.eventDate(event)}">Date</strong><small th:text="${@display.eventTime(event)}">Time</small></div><span th:if="${event == null}">—</span></td>
+                        <td><div class="booking-ticket-cell"><strong th:text="${@display.ticketName(registration)}">General Admission</strong><small th:text="${@display.ticketPaid(registration)}">Free</small><span class="booking-coupon-note" th:if="${@display.discounted(registration)}"><i class="bi bi-tag-fill"></i><span th:text="${registration.couponCode + ' · -' + @display.discountAmount(registration)}">SEU20</span></span></div></td><td th:text="${@display.registrationTime(registration)}">Date</td>
+                        <td><span class="status-badge" th:classappend="${event != null and @display.status(event) == 'COMPLETED'} ? ' completed-status' : ' success-status'" th:text="${event != null ? @display.status(event) : 'UNKNOWN'}">UPCOMING</span></td>
+                        <td class="action-cell"><form class="inline-form confirm-form" th:if="${event == null or @display.status(event) != 'COMPLETED'}" th:action="@{'/admin/registrations/' + ${registration.id} + '/delete'}" method="post" th:attr="data-confirm-title='Remove booking?',data-confirm='Remove ' + ${registration.participantName} + ' from this event? The participant will be notified.',data-confirm-action='Remove Booking'"><button class="small-action-button danger-action" type="submit" title="Remove booking"><i class="bi bi-x-circle"></i></button></form><button class="small-action-button readonly-history-lock" th:if="${event != null and @display.status(event) == 'COMPLETED'}" type="button" disabled title="Completed booking history is read-only"><i class="bi bi-lock-fill"></i></button></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="clean-empty" th:if="${#lists.isEmpty(registrations)}"><i class="bi bi-ticket-perforated"></i><h3>No bookings yet</h3><p>Participant registrations will appear here.</p></div>
+            <div class="clean-empty filtered-empty" data-table-empty><i class="bi bi-search"></i><h3>No matching bookings</h3><p>Try a different search or filter.</p></div>
+            <div class="operations-table-footer" th:if="${!#lists.isEmpty(registrations)}">
+                <div class="table-page-size"><span>Show</span><select data-table-page-size><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="ALL">All</option></select><span>entries</span></div>
+                <div class="table-range" data-table-range>Showing 0 of 0</div>
+                <div class="table-pagination" data-table-pagination></div>
+            </div>
+        </section>
+    </main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div><div th:replace="~{fragments :: confirmModal}"></div>
+<script th:src="@{/js/site.js(v='20261011clean')}" src="/js/site.js?v=20261011clean"></script>
+
+<script th:src="@{/js/workspace-final.js(v=20261011clean)}" src="/js/workspace-final.js?v=20261011clean" defer></script>
+</body>
+</html>

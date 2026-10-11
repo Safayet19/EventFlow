@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#ffffff">
+    <title>EventFlow | Coupons</title>
+    <link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png(v='20260923couponcontact1')}" href="/images/eventflow-favicon.png?v=20260923couponcontact1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css(v=20261011clean)}" href="/css/site.css?v=20261011clean">
+    <link rel="stylesheet" th:href="@{/css/workspace-final.css(v=20261011full)}" href="/css/workspace-final.css?v=20261011full">
+</head>
+<body class="ef-workspace">
+<div th:replace="~{fragments :: topbar}"></div>
+<div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('coupons')}"></div>
+
+    <main class="app-main">
+        <section class="page-heading coupon-page-heading">
+            <div>
+                <span class="section-kicker">PROMOTIONS</span>
+                <h1>Coupons & Discounts</h1>
+                <p th:text="${couponMode == 'admin' ? 'Create and manage promotional discounts across paid events.' : 'Create promotional codes for your paid events and monitor every redemption.'}">Manage event coupons.</p>
+            </div>
+            <a class="primary-button coupon-heading-action" th:if="${!#lists.isEmpty(paidEvents)}" href="#createCoupon"><i class="bi bi-plus-lg"></i>Create Coupon</a>
+            <a class="primary-button coupon-heading-action" th:if="${#lists.isEmpty(paidEvents) and couponMode == 'organizer'}" th:href="@{/organizer/events/new}"><i class="bi bi-plus-lg"></i>Create Paid Event</a>
+            <a class="secondary-button coupon-heading-action" th:if="${#lists.isEmpty(paidEvents) and couponMode == 'admin'}" th:href="@{/admin/events}"><i class="bi bi-calendar-check"></i>Manage Events</a>
+        </section>
+
+        <section class="operations-metric-grid coupon-metric-grid">
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-percent"></i></span><div><small>Total Coupons</small><strong th:text="${#lists.size(coupons)}">0</strong><span>created codes</span></div></article>
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-lightning-charge"></i></span><div><small>Active Coupons</small><strong th:text="${activeCouponCount}">0</strong><span>currently usable</span></div></article>
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-check2-circle"></i></span><div><small>Redemptions</small><strong th:text="${couponRedemptions}">0</strong><span>discounted bookings</span></div></article>
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-ticket-perforated"></i></span><div><small>Paid Events</small><strong th:text="${paidEventCount}">0</strong><span>eligible events</span></div></article>
+        </section>
+
+        <section class="coupon-workspace">
+            <article class="coupon-create-card" id="createCoupon">
+                <div class="coupon-card-heading">
+                    <div class="program-form-icon"><i class="bi bi-tag"></i></div>
+                    <div><span class="section-kicker">NEW PROMOTION</span><h2>Create Coupon</h2><p>Apply a percentage or fixed discount to one paid event.</p></div>
+                </div>
+
+                <form th:if="${!#lists.isEmpty(paidEvents)}" th:action="${couponBase}" method="post" class="coupon-form" data-loading>
+                    <div class="coupon-form-grid">
+                        <div class="field-group full-width">
+                            <label for="couponEvent">Paid event</label>
+                            <select id="couponEvent" name="eventId" required>
+                                <option value="">Choose event</option>
+                                <option th:each="event : ${paidEvents}" th:value="${event.id}" th:text="${event.title + ' · ' + @display.eventDate(event)}">Event</option>
+                            </select>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="couponCode">Coupon code</label>
+                            <div class="coupon-code-field"><i class="bi bi-ticket-detailed"></i><input id="couponCode" name="code" type="text" minlength="3" maxlength="20" required placeholder="SEU20" autocomplete="off"></div>
+                            <small>Letters, numbers, hyphen or underscore.</small>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="discountType">Discount type</label>
+                            <select id="discountType" name="discountType" required>
+                                <option value="PERCENT">Percentage (%)</option>
+                                <option value="FIXED">Fixed amount (BDT)</option>
+                            </select>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="discountValue">Discount value</label>
+                            <input id="discountValue" name="discountValue" type="number" min="0.01" step="0.01" required placeholder="20">
+                        </div>
+
+                        <div class="field-group">
+                            <label for="couponExpiry">Expiry date</label>
+                            <div class="event-picker-field coupon-date-field">
+                                <input id="couponExpiry" class="coupon-date-picker" name="expiryDate" type="text" required placeholder="Select expiry date" autocomplete="off">
+                                <span class="event-picker-button static-icon"><i class="bi bi-calendar3"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="usageLimit">Usage limit</label>
+                            <input id="usageLimit" name="usageLimit" type="number" min="1" max="100000" value="50" required>
+                        </div>
+
+                        <div class="field-group coupon-active-field">
+                            <label>Availability</label>
+                            <label class="compact-check"><input name="active" type="checkbox" value="true" checked><span>Active immediately</span></label>
+                        </div>
+                    </div>
+                    <button class="primary-button coupon-create-button" type="submit"><i class="bi bi-plus-lg"></i>Create Coupon</button>
+                </form>
+
+                <div class="program-empty compact-empty coupon-no-paid" th:if="${#lists.isEmpty(paidEvents)}">
+                    <div><i class="bi bi-ticket-perforated"></i></div>
+                    <h3>No paid events available</h3>
+                    <p>Coupons can only be created for upcoming paid events.</p>
+                    <a class="primary-button" th:if="${couponMode == 'organizer'}" th:href="@{/organizer/events/new}"><i class="bi bi-plus-lg"></i>Create Paid Event</a>
+                    <a class="secondary-button" th:if="${couponMode == 'admin'}" th:href="@{/admin/events}"><i class="bi bi-pencil-square"></i>Set an Event to Paid</a>
+                </div>
+            </article>
+
+            <article class="coupon-guidance-card">
+                <span class="section-kicker">HOW IT WORKS</span>
+                <h2>Simple discount workflow</h2>
+                <div class="coupon-guidance-step"><span>1</span><div><strong>Create a code</strong><p>Choose a paid event, discount and usage limit.</p></div></div>
+                <div class="coupon-guidance-step"><span>2</span><div><strong>Share the code</strong><p>Participants enter it while reserving a paid ticket.</p></div></div>
+                <div class="coupon-guidance-step"><span>3</span><div><strong>Track usage</strong><p>Every discounted booking is counted automatically.</p></div></div>
+                <div class="coupon-guidance-note"><i class="bi bi-shield-check"></i><span>Expired, paused and over-limit coupons are rejected by the backend.</span></div>
+            </article>
+        </section>
+
+        <section class="operations-table-card" data-smart-table data-row-label="coupon" data-row-label-plural="coupons">
+            <div class="operations-table-head">
+                <div><span class="section-kicker">MANAGE</span><h2>Coupon Library</h2><p>Search, filter, edit or pause promotional codes.</p></div>
+                <span class="operations-result-count" data-table-count th:text="${#lists.size(coupons) + (#lists.size(coupons) == 1 ? ' coupon' : ' coupons')}">0 coupons</span>
+            </div>
+
+            <div class="operations-toolbar">
+                <label class="table-search operations-search"><i class="bi bi-search"></i><input type="search" data-table-search placeholder="Search code, event or discount..."></label>
+                <select class="toolbar-select" data-table-filter="status"><option value="ALL">All statuses</option><option value="ACTIVE">Active</option><option value="PAUSED">Paused</option><option value="EXPIRED">Expired</option></select>
+                <select class="toolbar-select compact-toolbar-select" data-table-page-size><option value="10">10 per page</option><option value="25">25 per page</option><option value="50">50 per page</option><option value="ALL">Show all</option></select>
+            </div>
+
+            <div class="table-scroll">
+                <table class="data-table coupon-table">
+                    <thead><tr><th>Coupon</th><th>Event</th><th>Discount</th><th>Expiry</th><th>Usage</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody data-table-body>
+                    <tr th:each="coupon : ${coupons}"
+                        th:with="couponEvent=${eventMap[coupon.eventId]},efDiscount=${@display.discount(coupon)},efCouponStatus=${@display.couponStatus(coupon)}"
+                        th:attr="data-search=${coupon.code + ' ' + (couponEvent != null ? couponEvent.title : '') + ' ' + efDiscount},data-status=${efCouponStatus}">
+                        <td><div class="coupon-code-cell"><span><i class="bi bi-tag-fill"></i></span><div><strong th:text="${coupon.code}">SEU20</strong><small th:text="${coupon.discountType == 'PERCENT' ? 'Percentage discount' : 'Fixed discount'}">Discount</small></div></div></td>
+                        <td><div class="booking-event-cell"><strong th:text="${couponEvent != null ? couponEvent.title : 'Event unavailable'}">Event</strong><small th:text="${couponEvent != null ? @display.eventDate(couponEvent) : '—'}">Date</small></div></td>
+                        <td><strong class="coupon-discount-value" th:text="${@display.discount(coupon)}">20% OFF</strong></td>
+                        <td th:text="${@display.couponExpiry(coupon)}">30 Sep 2026</td>
+                        <td><div class="coupon-usage"><strong th:text="${usageCounts[coupon.id] + ' / ' + coupon.usageLimit}">0 / 50</strong><div class="progress-track"><span th:style="|width:${coupon.usageLimit > 0 ? (usageCounts[coupon.id] * 100 / coupon.usageLimit) : 0}%|"></span></div></div></td>
+                        <td><span class="coupon-status" th:classappend="${' ' + #strings.toLowerCase(@display.couponStatus(coupon))}" th:text="${@display.couponStatus(coupon)}">ACTIVE</span></td>
+                        <td>
+                            <div class="table-actions" th:if="${couponEvent != null and @display.status(couponEvent) != 'COMPLETED'}">
+                                <button class="small-action-button coupon-edit-toggle" type="button" th:attr="data-target=${'coupon-editor-' + coupon.id}" title="Edit coupon"><i class="bi bi-pencil"></i></button>
+                                <form class="inline-form confirm-form" th:action="${couponBase + '/' + coupon.id + '/delete'}" method="post" data-confirm-title="Delete this coupon?" data-confirm="Used coupons cannot be deleted. Pause the coupon instead if it has redemptions." data-confirm-action="Delete Coupon">
+                                    <input type="hidden" name="eventId" th:value="${coupon.eventId}">
+                                    <button class="small-action-button danger-action" type="submit" title="Delete coupon"><i class="bi bi-trash3"></i></button>
+                                </form>
+                            </div>
+
+                            <span class="status-badge completed-status" th:if="${couponEvent != null and @display.status(couponEvent) == 'COMPLETED'}"><i class="bi bi-lock-fill"></i> History</span>
+                            <div class="coupon-inline-editor" th:if="${couponEvent != null and @display.status(couponEvent) != 'COMPLETED'}" th:id="${'coupon-editor-' + coupon.id}" hidden>
+                                <form th:action="${couponBase + '/' + coupon.id + '/edit'}" method="post" data-loading>
+                                    <input type="hidden" name="eventId" th:value="${coupon.eventId}">
+                                    <div class="coupon-editor-grid">
+                                        <div class="field-group"><label>Code</label><input name="code" type="text" minlength="3" maxlength="20" required th:value="${coupon.code}"></div>
+                                        <div class="field-group"><label>Type</label><select name="discountType" required><option value="PERCENT" th:selected="${coupon.discountType == 'PERCENT'}">Percentage (%)</option><option value="FIXED" th:selected="${coupon.discountType == 'FIXED'}">Fixed amount</option></select></div>
+                                        <div class="field-group"><label>Value</label><input name="discountValue" type="number" min="0.01" step="0.01" required th:value="${coupon.discountValue}"></div>
+                                        <div class="field-group"><label>Expiry</label><input class="coupon-date-picker" name="expiryDate" type="text" required th:value="${coupon.expiryDate}"></div>
+                                        <div class="field-group"><label>Usage limit</label><input name="usageLimit" type="number" min="1" max="100000" required th:value="${coupon.usageLimit}"></div>
+                                        <div class="field-group coupon-active-field"><label>Availability</label><label class="compact-check"><input name="active" type="checkbox" value="true" th:checked="${coupon.active}"><span>Active</span></label></div>
+                                    </div>
+                                    <div class="coupon-editor-actions"><button class="secondary-button coupon-edit-cancel" type="button">Cancel</button><button class="primary-button" type="submit"><i class="bi bi-check2"></i>Save Changes</button></div>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="clean-empty" data-table-empty th:style="${#lists.isEmpty(coupons)} ? '' : 'display:none'"><i class="bi bi-percent"></i><h3>No coupons found</h3><p>Create a coupon above or adjust your search and filters.</p></div>
+            <div class="operations-table-footer"><span data-table-range></span><div class="table-pagination" data-table-pagination></div></div>
+        </section>
+    </main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div><div th:replace="~{fragments :: confirmModal}"></div>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script th:src="@{/js/site.js(v='20260923couponcontact1')}" src="/js/site.js?v=20260923couponcontact1"></script>
+
+<script th:src="@{/js/workspace-final.js(v=20261011clean)}" src="/js/workspace-final.js?v=20261011clean" defer></script>
+</body>
+</html>

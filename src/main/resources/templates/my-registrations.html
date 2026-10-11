@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventFlow | My Registrations</title>
+    <link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png(v='20260923couponcontact1')}" href="/images/eventflow-favicon.png?v=20260923couponcontact1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css(v=20261011tickets)}" href="/css/site.css?v=20261011tickets">
+    <link rel="stylesheet" th:href="@{/css/workspace-final.css(v=20261011tickets)}" href="/css/workspace-final.css?v=20261011tickets">
+</head>
+<body class="ef-workspace">
+<div th:replace="~{fragments :: topbar}"></div>
+<div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('registrations')}"></div>
+    <main class="app-main">
+        <section class="page-heading">
+            <div><span class="section-kicker">PARTICIPANT WORKSPACE</span><h1>My Registrations</h1><p>Everything you have registered for, with quick access to event details, cancellation and post-event feedback.</p></div>
+            <a class="primary-button" th:href="@{/events}"><i class="bi bi-search"></i>Explore Events</a>
+        </section>
+
+        <section class="registration-filter-bar" th:if="${!#lists.isEmpty(registrations)}">
+            <label for="registrationPricingFilter"><i class="bi bi-ticket-perforated"></i>Event type</label>
+            <select class="toolbar-select compact-toolbar-select" id="registrationPricingFilter" aria-label="Filter registrations by pricing">
+                <option value="ALL">Free &amp; Paid</option>
+                <option value="FREE">Free</option>
+                <option value="PAID">Paid</option>
+            </select>
+            <label class="ef-filter-label" for="registrationStageFilter">Schedule</label>
+            <select class="toolbar-select compact-toolbar-select" id="registrationStageFilter" aria-label="Filter by event schedule">
+                <option value="ALL">All dates</option><option value="UPCOMING">Upcoming</option><option value="COMPLETED">Completed</option>
+            </select>
+            <span class="registration-filter-count" id="registrationFilterCount" th:text="${#lists.size(registrations) + (#lists.size(registrations) == 1 ? ' registration' : ' registrations')}">0 registrations</span>
+        </section>
+
+        <section class="registration-list" id="registrationList" th:if="${!#lists.isEmpty(registrations)}">
+            <article class="registration-card" th:each="registration : ${registrations}"
+                     th:with="event=${eventMap[registration.eventId]},myFeedback=${feedbackMap[registration.eventId]},efPaid=${@display.paid(event)},efPaidTicket=${@display.paidTicket(registration)},efStatus=${@display.status(event)}"
+                     th:id="${'registration-' + registration.eventId}"
+                     th:attr="data-pricing=${efPaidTicket or efPaid ? 'PAID' : 'FREE'},data-stage=${event != null and efStatus == 'COMPLETED' ? 'COMPLETED' : 'UPCOMING'}">
+                <img data-event-image th:attr="data-event-category=${event.category}" th:if="${event != null}" th:with="efListingImage=${@display.listingImageUrl(event)}" th:src="${efListingImage}" alt="Event image" loading="lazy" decoding="async">
+                <div class="registration-card-body">
+                    <div class="registration-card-top"><span class="status-badge success-status">REGISTERED</span><span class="ef-payment-record-label" th:if="${registration.paymentStatus != null and #strings.startsWith(registration.paymentStatus, 'PAID_')}">Paid</span><span class="ef-payment-record-warning" th:if="${registration.paymentStatus == null and registration.finalPrice != null and registration.finalPrice.signum() > 0}">Payment not recorded</span><small th:text="${@display.registrationTime(registration)}">Registered date</small></div>
+                    <h2 th:text="${event != null ? event.title : 'Event no longer available'}">Event title</h2>
+                    <div class="registration-ticket-summary"><i class="bi bi-ticket-detailed"></i><div><span>Ticket</span><strong th:text="${@display.ticketName(registration)}">General Admission</strong><small class="booking-coupon-note" th:if="${@display.discounted(registration)}"><i class="bi bi-tag-fill"></i><span th:text="${registration.couponCode + ' · saved ' + @display.discountAmount(registration)}">SEU20</span></small></div><em><span th:if="${@display.discounted(registration)}" class="ticket-original-price" th:text="${@display.originalTicketPrice(registration)}">৳500</span><strong th:text="${@display.ticketPaid(registration)}">Free</strong></em></div>
+                    <div class="registration-meta" th:if="${event != null}">
+                        <span><i class="bi bi-calendar3"></i><span th:text="${@display.eventDate(event) + ' · ' + @display.eventTime(event)}">Date</span></span>
+                        <span><i class="bi bi-geo-alt"></i><span th:text="${event.location}">Location</span></span>
+                        <span><i class="bi bi-person-badge"></i><span th:text="${event.organizerName}">Organizer</span></span>
+                    </div>
+
+                    <div class="participant-feedback-panel" th:if="${event != null and @display.status(event) == 'COMPLETED'}">
+                        <div class="participant-feedback-copy" th:if="${myFeedback == null}">
+                            <span class="feedback-ready-label"><i class="bi bi-check2-circle"></i>Event completed</span>
+                            <strong>How was your experience?</strong>
+                            <small>Your rating helps organizers improve future events.</small>
+                        </div>
+
+                        <div class="participant-feedback-copy" th:if="${myFeedback != null}">
+                            <span class="feedback-ready-label"><i class="bi bi-star-fill"></i>Your feedback</span>
+                            <div class="saved-rating-row">
+                                <div class="display-stars" aria-label="Your rating">
+                                    <i class="bi bi-star-fill" th:each="star : ${#numbers.sequence(1,5)}" th:classappend="${star <= myFeedback.rating} ? ' active' : ''"></i>
+                                </div>
+                                <strong th:text="${myFeedback.rating + '/5'}">5/5</strong>
+                            </div>
+                            <small th:if="${myFeedback.comment != null and !myFeedback.comment.isBlank()}" th:text="${myFeedback.comment}">Your comment</small>
+                            <small th:if="${myFeedback.comment == null or myFeedback.comment.isBlank()}">Rating submitted without a written comment.</small>
+                        </div>
+
+                        <button class="feedback-open-button" type="button"
+                                th:attr="data-event-id=${event.id},data-event-title=${event.title},data-rating=${myFeedback != null ? myFeedback.rating : 0},data-comment=${myFeedback != null ? myFeedback.comment : ''}">
+                            <i class="bi" th:classappend="${myFeedback != null} ? ' bi-pencil-square' : ' bi-star'"></i>
+                            <span th:text="${myFeedback != null ? 'Edit Feedback' : 'Rate Event'}">Rate Event</span>
+                        </button>
+                    </div>
+
+                    <div class="card-actions" th:if="${event != null}">
+                        <a class="secondary-button" th:href="@{'/events/' + ${event.id}}"><i class="bi bi-eye"></i>View Event Details</a>
+                        <a class="secondary-button" th:href="@{'/participant/registrations/' + ${registration.id} + '/ticket.pdf'}"><i class="bi bi-download"></i>Download Ticket</a>
+                        <a class="secondary-button" th:if="${@display.hasPaymentReceipt(registration)}" th:href="@{'/participant/registrations/' + ${registration.id} + '/receipt.pdf'}"><i class="bi bi-receipt"></i>Download Receipt</a>
+                        <form class="inline-form confirm-form" th:if="${@display.status(event) != 'COMPLETED' and !@display.paidTicket(registration) and !@display.paid(event)}" th:action="@{'/participant/events/' + ${event.id} + '/cancel'}" method="post" th:attr="data-confirm-title='Cancel registration?',data-confirm='Cancel your registration for ' + ${event.title} + '?',data-confirm-action='Cancel Registration'">
+                            <button class="danger-button" type="submit"><i class="bi bi-x-circle"></i>Cancel Registration</button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="large-empty registration-filter-empty" id="registrationFilterEmpty" style="display:none"><div class="empty-icon"><i class="bi bi-funnel"></i></div><h2>No matching registrations</h2><p>Try a different Free/Paid filter.</p></section>
+        <section class="large-empty" th:if="${#lists.isEmpty(registrations)}"><div class="empty-icon"><i class="bi bi-ticket-perforated"></i></div><h2>No registrations yet</h2><p>Explore upcoming events and register for the ones you want to attend.</p><a class="primary-button" th:href="@{/events}"><i class="bi bi-search"></i>Explore Events</a></section>
+    </main>
+</div>
+
+<div class="feedback-modal" id="feedbackModal" aria-hidden="true">
+    <div class="feedback-modal-card" role="dialog" aria-modal="true" aria-labelledby="feedbackModalTitle">
+        <button class="modal-close" id="closeFeedbackModal" type="button" aria-label="Close feedback form"><i class="bi bi-x-lg"></i></button>
+        <span class="section-kicker">EVENT FEEDBACK</span>
+        <h2 id="feedbackModalTitle">Rate your experience</h2>
+        <p id="feedbackEventTitle" class="feedback-event-title">Event title</p>
+
+        <form id="feedbackForm" th:action="@{/participant/events/feedback}" method="post" data-loading>
+            <input id="feedbackRating" name="rating" type="hidden" value="0">
+            <div class="feedback-form-group">
+                <label>Your rating <span>*</span></label>
+                <div class="star-rating-input" id="feedbackStars" role="radiogroup" aria-label="Event rating">
+                    <button type="button" data-rating="1" aria-label="1 star"><i class="bi bi-star-fill"></i></button>
+                    <button type="button" data-rating="2" aria-label="2 stars"><i class="bi bi-star-fill"></i></button>
+                    <button type="button" data-rating="3" aria-label="3 stars"><i class="bi bi-star-fill"></i></button>
+                    <button type="button" data-rating="4" aria-label="4 stars"><i class="bi bi-star-fill"></i></button>
+                    <button type="button" data-rating="5" aria-label="5 stars"><i class="bi bi-star-fill"></i></button>
+                </div>
+                <small class="feedback-rating-label" id="feedbackRatingLabel">Select 1 to 5 stars</small>
+                <small class="feedback-form-error" id="feedbackRatingError"></small>
+            </div>
+            <div class="feedback-form-group">
+                <div class="feedback-label-row"><label for="feedbackComment">Comment <em>Optional</em></label><span id="feedbackCommentCount">0 / 500</span></div>
+                <textarea id="feedbackComment" name="comment" maxlength="500" rows="5" placeholder="Share what you liked or what could be improved..."></textarea>
+            </div>
+            <div class="feedback-modal-actions">
+                <button class="secondary-button" id="feedbackCancel" type="button">Cancel</button>
+                <button class="primary-button" type="submit"><i class="bi bi-send"></i><span id="feedbackSubmitText">Submit Feedback</span></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragments :: toasts}"></div><div th:replace="~{fragments :: confirmModal}"></div>
+<script th:src="@{/js/site.js(v='20261011tickets')}" src="/js/site.js?v=20260923fullfix1"></script>
+
+<script th:src="@{/js/workspace-final.js(v=20261011tickets)}" src="/js/workspace-final.js?v=20261011clean" defer></script>
+</body>
+</html>

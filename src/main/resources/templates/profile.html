@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>EventFlow | Profile</title>
+    <link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png(v='20260923final')}" href="/images/eventflow-favicon.png?v=20260923final">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css(v=20261011clean)}" href="/css/site.css?v=20261011clean">
+    <link rel="stylesheet" th:href="@{/css/workspace-final.css(v=20261011full)}" href="/css/workspace-final.css?v=20261011full">
+</head>
+<body class="ef-workspace">
+<div th:replace="~{fragments :: topbar}"></div>
+<div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('profile')}"></div>
+    <main class="app-main">
+        <section class="page-heading">
+            <div>
+                <span class="section-kicker">ACCOUNT</span>
+                <h1>Profile & Security</h1>
+                <p th:text="${@display.demoAccount(user) ? 'View your account details and security settings.' : 'Update your profile picture, personal information and account security.'}">Update your profile picture, personal information and account security.</p>
+            </div>
+        </section>
+
+        <section class="profile-grid">
+            <article class="surface-card profile-summary-card">
+                <div class="profile-photo-static" th:if="${@display.demoAccount(user)}">
+                    <img class="profile-avatar-large profile-avatar-image"
+                         th:src="${user.profileImageUrl != null ? user.profileImageUrl : '/images/default-avatar.png'}"
+                         src="/images/default-avatar.png" alt="Profile picture">
+                </div>
+
+                <form id="profilePhotoForm" class="profile-photo-form" th:if="${!(@display.demoAccount(user))}" th:action="@{/profile/photo}" method="post" enctype="multipart/form-data" novalidate data-loading>
+                    <label class="profile-photo-picker" for="profilePhotoInput" title="Choose a profile picture">
+                        <img id="profilePhotoPreview" class="profile-avatar-large profile-avatar-image"
+                             th:src="${user.profileImageUrl != null ? user.profileImageUrl : '/images/default-avatar.png'}"
+                             th:attr="data-original-src=${user.profileImageUrl != null ? user.profileImageUrl : '/images/default-avatar.png'}"
+                             src="/images/default-avatar.png" data-original-src="/images/default-avatar.png" alt="Profile picture">
+                        <span class="profile-photo-overlay"><i class="bi bi-camera-fill"></i><span>Change photo</span></span>
+                        <input id="profilePhotoInput" name="photo" type="file" accept="image/jpeg,image/png,image/webp">
+                    </label>
+                    <small class="field-error profile-photo-error" data-profile-error="photo"></small>
+                    <div class="profile-photo-actions" id="profilePhotoActions" hidden>
+                        <button class="primary-button compact-button" type="submit"><i class="bi bi-check2"></i><span>Save Photo</span></button>
+                        <button class="secondary-button compact-button" id="profilePhotoCancel" type="button"><i class="bi bi-x-lg"></i><span>Cancel</span></button>
+                    </div>
+                </form>
+
+                <form class="profile-photo-remove confirm-form" th:if="${!(@display.demoAccount(user)) and user.profileImageUrl != null}" th:action="@{/profile/photo/remove}" method="post"
+                      data-confirm-title="Remove profile picture?"
+                      data-confirm="Your account will use the default profile picture again."
+                      data-confirm-action="Remove Photo">
+                    <button class="profile-remove-link" type="submit"><i class="bi bi-trash3"></i>Remove photo</button>
+                </form>
+
+                <h2 th:text="${user.fullName}">User</h2>
+                <p th:text="${user.email}">user@example.com</p>
+                <div class="profile-meta-list">
+                    <div><span>Role</span><strong class="role-chip" th:text="${user.role}">PARTICIPANT</strong></div>
+                    <div><span>Account status</span><strong class="status-badge" th:classappend="${user.enabled} ? ' success-status' : ' danger-status'" th:text="${user.enabled ? 'ACTIVE' : 'DISABLED'}">ACTIVE</strong></div>
+                </div>
+                <div class="profile-note" th:if="${!(@display.demoAccount(user))}">
+                    <i class="bi bi-shield-check"></i>
+                    <p>Your email is used for sign in. Administrators can manage account roles and status.</p>
+                </div>
+            </article>
+
+            <div class="profile-form-stack">
+                <article class="surface-card profile-form-card demo-account-card" th:if="${@display.demoAccount(user)}">
+                    <div class="demo-account-icon"><i class="bi bi-lock-fill"></i></div>
+                    <div class="demo-account-text">
+                        <h2>Shared demo profile</h2>
+                        <p>This demo account is read-only. Your own account lets you update your photo, profile and password.</p>
+                    </div>
+                </article>
+
+                <form class="surface-card profile-form-card" id="profileForm" th:if="${!(@display.demoAccount(user))}" th:action="@{/profile}" method="post" novalidate data-loading>
+                    <div class="surface-heading">
+                        <div><span class="section-kicker">PERSONAL INFO</span><h2>Edit profile</h2></div>
+                    </div>
+                    <div class="field-group">
+                        <label for="profileFullName">Full name</label>
+                        <input id="profileFullName" name="fullName" type="text" minlength="3" maxlength="50" required th:value="${user.fullName}" autocomplete="name">
+                        <small class="field-error" data-profile-error="name"></small>
+                    </div>
+                    <div class="field-group">
+                        <label for="profileEmail">Email address</label>
+                        <input id="profileEmail" type="email" th:value="${user.email}" readonly>
+                        <small class="field-help">Email is used for sign in and cannot be changed here.</small>
+                    </div>
+                    <div class="form-actions-row profile-actions">
+                        <button class="primary-button" type="submit"><i class="bi bi-check2"></i><span>Save Changes</span></button>
+                    </div>
+                </form>
+
+                <form class="surface-card profile-form-card" id="passwordForm" th:if="${!(@display.demoAccount(user))}" th:action="@{/profile/password}" method="post" novalidate data-loading>
+                    <div class="surface-heading">
+                        <div><span class="section-kicker">SECURITY</span><h2>Change password</h2></div>
+                    </div>
+                    <div class="field-group password-field-wrap">
+                        <label for="currentPassword">Current password</label>
+                        <div class="site-password-input"><input id="currentPassword" name="currentPassword" type="password" autocomplete="current-password" required><button type="button" class="site-password-toggle" data-password-target="currentPassword" aria-label="Show password"><i class="bi bi-eye"></i></button></div>
+                        <small class="field-error" data-profile-error="current"></small>
+                    </div>
+                    <div class="field-group password-field-wrap">
+                        <label for="newPassword">New password</label>
+                        <div class="site-password-input"><input id="newPassword" name="newPassword" type="password" autocomplete="new-password" required><button type="button" class="site-password-toggle" data-password-target="newPassword" aria-label="Show password"><i class="bi bi-eye"></i></button></div>
+                        <div class="profile-password-rules" id="profilePasswordRules">
+                            <span data-profile-rule="length">8+ characters</span>
+                            <span data-profile-rule="upper">Uppercase</span>
+                            <span data-profile-rule="lower">Lowercase</span>
+                            <span data-profile-rule="number">Number</span>
+                            <span data-profile-rule="special">Special</span>
+                        </div>
+                        <small class="field-error" data-profile-error="new"></small>
+                    </div>
+                    <div class="field-group password-field-wrap">
+                        <label for="confirmNewPassword">Confirm new password</label>
+                        <div class="site-password-input"><input id="confirmNewPassword" name="confirmPassword" type="password" autocomplete="new-password" required><button type="button" class="site-password-toggle" data-password-target="confirmNewPassword" aria-label="Show password"><i class="bi bi-eye"></i></button></div>
+                        <small class="field-error" data-profile-error="confirm"></small>
+                    </div>
+                    <div class="form-actions-row profile-actions">
+                        <button class="primary-button" type="submit"><i class="bi bi-shield-lock"></i><span>Update Password</span></button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div>
+<script th:src="@{/js/site.js(v='20260923finalfix2')}" src="/js/site.js?v=20260923finalfix2"></script>
+
+<script th:src="@{/js/workspace-final.js(v=20261011clean)}" src="/js/workspace-final.js?v=20261011clean" defer></script>
+</body>
+</html>

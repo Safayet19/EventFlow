@@ -1,0 +1,265 @@
+/* EventFlow V1: Shared light UI. Approved home.html and home-v2.css are kept intact. */
+:root { --v1-ink:#0b1530; --v1-muted:#53617a; --v1-gold:#dca10d; --v1-gold-dark:#bd8300; --v1-line:#e8ebf1; --v1-tint:#f7f9fe; --v1-radius:13px; }
+*,*::before,*::after {box-sizing:border-box}
+html {scroll-behavior:smooth}
+body.v1-page {margin:0; background:#fff!important; color:var(--v1-ink)!important; font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif; font-size:15px; line-height:1.5; min-width:320px; --bg:#fff;--panel:#fff;--panel-2:#f8f9fc;--panel-3:#f4f7ff;--line:#e8ebf1;--text:#0b1530;--muted:#53617a;--yellow:#dca10d;--yellow-soft:#fff2d3;--yellow-line:#efd6a0;--shadow:0 6px 24px rgba(13,27,54,.06); }
+.v1-page a {text-decoration:none;color:inherit}
+.v1-page button,.v1-page input,.v1-page select {font:inherit}
+.v1-page button {cursor:pointer}
+.v1-page button:disabled {cursor:not-allowed;opacity:.55}
+.v1-page img {max-width:100%;display:block}
+.v1-page :is(a,button,input,select,textarea):focus-visible {outline:3px solid #98bfff;outline-offset:3px}
+.v1-container {width:min(1376px,calc(100% - 64px));margin-inline:auto}
+.v1-sr {position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.v1-small-icon {width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* The same brand / layout proportions / action styling as the approved homepage. */
+.v1-header {height:76px;position:relative;z-index:70;background:#fff;border-bottom:1px solid #ecedf1;box-shadow:0 2px 12px rgba(16,29,54,.045)}
+.v1-header-inner {height:100%;display:grid;grid-template-columns:minmax(225px,1fr) auto minmax(225px,1fr);align-items:center;gap:20px}
+.v1-brand {width:fit-content;display:inline-flex;align-items:center}
+.v1-brand img {width:204px;height:auto;max-height:70px;object-fit:contain}
+.v1-main-nav {height:100%;display:flex;align-items:center;gap:45px}
+.v1-main-nav a {height:100%;display:inline-flex;align-items:center;position:relative;white-space:nowrap;color:#07112a;font-size:16px;font-weight:530}
+.v1-main-nav a.is-active {font-weight:730}
+.v1-main-nav a.is-active::after {content:"";height:2px;position:absolute;bottom:14px;left:-7px;right:-7px;border-radius:3px;background:#e4a90c}
+.v1-main-nav a:hover,.v1-login:hover {color:#ad790b}
+.v1-header-actions {display:flex;align-items:center;justify-content:flex-end;gap:29px}
+.v1-nav-search {width:33px;height:38px;display:grid;place-items:center;color:#0b1530}
+.v1-nav-search svg {width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round}
+.v1-login {color:#0b1530;font-weight:520;font-size:15px}
+.v1-signup,.v1-gold-button {border:0;display:inline-flex;justify-content:center;align-items:center;gap:8px;background:linear-gradient(110deg,#e5ad1c,#d19208);color:#fff!important;font-weight:730;box-shadow:none;transition:filter .2s ease,transform .2s ease}
+.v1-signup {min-height:39px;padding:0 22px;border-radius:24px;font-size:14px;white-space:nowrap}
+.v1-gold-button {min-height:43px;border-radius:10px;padding:0 22px;color:#111827!important;font-size:14px}
+.v1-gold-button:hover,.v1-signup:hover {filter:brightness(.94);transform:translateY(-1px)}
+.v1-outline-button {min-height:41px;padding:8px 16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #dfe4eb;border-radius:10px;background:#fff;color:var(--v1-ink)!important;font-weight:630}
+.v1-outline-button:hover {border-color:#dfad40;background:#fff9eb}
+.v1-eyebrow {margin:0;letter-spacing:.22em;color:#293a57;font-size:12px;font-weight:720}
+.v1-back-link {display:inline-flex;gap:9px;align-items:center;color:#526079!important;font-size:14px;font-weight:600}
+.v1-back-link:hover {color:#a86c06!important}
+/* EXPLORE */
+.v1-explore-intro {height:175px;background:linear-gradient(90deg,#f1f5ff 0%,rgba(244,246,255,.97) 40%,rgba(243,247,253,.85) 75%,rgba(247,250,254,.97) 100%),url('/images/home-conference-hero.webp') center 42%/cover no-repeat;display:flex;align-items:center;border-bottom:1px solid #e9edf5}
+.v1-explore-intro h1 {font-family:Georgia,'Times New Roman',serif;font-size:clamp(36px,3.5vw,49px);letter-spacing:-.04em;line-height:1.12;margin:9px 0 5px;color:#09112b}
+.v1-explore-intro p:not(.v1-eyebrow) {font-size:16px;color:#4d5a73;margin:0}
+.v1-explore-content {padding:24px 0 88px}
+.v1-filter-shell {scroll-margin-top:25px}
+.v1-filters {display:grid;grid-template-columns:minmax(270px,2.15fr) 1.06fr .9fr .9fr 108px;gap:12px;align-items:center;padding:15px;background:#fff;border:1px solid #e8eaf1;border-radius:15px;box-shadow:0 6px 26px rgba(17,31,54,.055)}
+.v1-filters :is(input,select) {height:42px;min-width:0;width:100%;border:1px solid #e2e6ef;border-radius:10px;padding:0 13px;color:#22304a;background:#fff;outline:none;font-size:13px}
+.v1-filters select {cursor:pointer}
+.v1-field-search {display:flex;align-items:center;gap:7px;height:42px;border:1px solid #e2e6ef;border-radius:10px;color:#445371;padding-left:13px}
+.v1-field-search input {height:39px;border:0;padding-left:0}
+.v1-field-search:focus-within {border-color:#c99b2d}
+.v1-field-search .v1-small-icon {width:18px;height:18px}
+.v1-filters .v1-gold-button {height:42px;min-height:42px;padding:0 15px}
+.v1-category-pills {display:flex;gap:11px;flex-wrap:wrap;padding:21px 2px 13px}
+.v1-category-button {min-height:39px;padding:0 18px;border:1px solid #e8ebf4;border-radius:11px;background:#f7f9fe;color:#273451;font-size:13px;font-weight:590;transition:background .2s ease,border-color .2s ease}
+.v1-category-button:is(:hover,.is-active) {background:#fff2d3;border-color:#f6e7c4;color:#a36d00}
+.v1-list-heading {display:flex;align-items:baseline;gap:16px;justify-content:space-between;margin:3px 0 18px}
+.v1-list-heading h2 {margin:0;font-size:33px;line-height:1.25;letter-spacing:-.044em;font-family:Georgia,'Times New Roman',serif;color:#0a1230}
+.v1-list-heading span {color:#68758d;font-size:13px}
+.v1-event-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;align-items:stretch}
+.v1-event-card {display:flex;flex-direction:column;min-width:0;min-height:324px;background:#fff;border:1px solid #e6e9f0;border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(11,27,55,.055);transition:transform .2s,box-shadow .2s}
+.v1-event-card:hover {transform:translateY(-2px);box-shadow:0 9px 25px rgba(10,25,49,.09)}
+.v1-card-photo {height:156px;display:block;position:relative;overflow:hidden;background:#e4e9f1}
+.v1-card-photo img {width:100%;height:100%;object-fit:cover}
+.v1-card-tag {display:inline-flex;align-items:center;min-height:26px;padding:3px 11px;font-size:12px;font-weight:670;background:#dce8fe;color:#174683;border-radius:999px}
+.v1-card-photo .v1-card-tag {position:absolute;top:12px;left:13px;box-shadow:0 1px 8px rgba(0,0,0,.05)}
+.v1-event-card-body {display:flex;flex:1;flex-direction:column;padding:13px 16px 14px;min-width:0}
+.v1-event-date {color:#607087;display:flex;gap:7px;align-items:center;font-size:12px}
+.v1-event-date .v1-small-icon {width:16px;height:16px}
+.v1-event-card h3 {font-family:Georgia,'Times New Roman',serif;letter-spacing:-.029em;font-size:19px;line-height:1.25;color:#0c1530;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:8px 0 5px}
+.v1-event-card h3 a:hover {color:#a97207}
+.v1-event-location {color:#586783;margin:0 0 11px;font-size:12px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.v1-card-footer {display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto}
+.v1-card-price {font-size:17px;font-weight:750;color:#0e1b34;white-space:nowrap}
+.v1-card-price.is-free {color:#078d53}
+.v1-card-action {min-height:36px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:710;color:#fff!important;background:linear-gradient(120deg,#e5ac16,#d18e04);border-radius:21px;white-space:nowrap}
+.v1-card-action:hover {filter:brightness(.95)}
+.v1-card-availability {margin-top:5px;font-size:11px;font-weight:690;color:#bb6427}
+.v1-empty {padding:52px;text-align:center;background:#f9fafc;border:1px dashed #d9e0ec;border-radius:14px;margin-top:22px}
+.v1-empty h3 {margin:0 0 6px;font-size:23px;font-family:Georgia,serif}
+.v1-empty p {margin:0;color:#65748b}
+.v1-empty button {margin-top:15px;background:transparent;color:#af7809;border:0;text-decoration:underline}
+/* DETAILS: existing functional program/gallery/feedback modules retain their markup. */
+.v1-details-main {padding-top:23px;padding-bottom:70px}
+.v1-details-columns {margin-top:17px;display:grid;grid-template-columns:minmax(0,1fr) 350px;align-items:start;gap:27px}
+.v1-details-content {min-width:0}
+.v1-details-cover {width:100%;height:min(31vw,350px);min-height:225px;object-fit:cover;border:1px solid #e5e9f2;border-radius:14px}
+.v1-details-tags {display:flex;align-items:center;gap:9px;margin-top:21px}
+.v1-status-pill {font-size:11px;font-weight:760;color:#0b8050;background:#e2f9ee;border-radius:99px;padding:5px 10px}
+.v1-details-overview h1 {font-family:Georgia,'Times New Roman',serif;font-size:clamp(32px,3vw,44px);letter-spacing:-.045em;line-height:1.13;color:#0b1530;margin:11px 0 10px}
+.v1-details-summary {font-size:15px;color:#526079;line-height:1.72;margin:0 0 17px;max-width:850px}
+.v1-details-facts {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.v1-details-facts>div {display:grid;grid-template-columns:20px 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:start;padding:14px;background:#f8faff;border:1px solid #eff1f7;border-radius:10px}
+.v1-details-facts i {grid-row:span 2;color:#b37d08;font-size:17px}
+.v1-details-facts span {font-size:11px;color:#748096}
+.v1-details-facts strong {font-size:13px;font-weight:650;color:#1d2a44;overflow-wrap:anywhere}
+.v1-details-manage {margin-top:15px;display:flex;gap:12px;align-items:center}
+.v1-saved-badge {color:#17824c;font-weight:720}
+.v1-booking-panel {position:sticky;top:20px;padding:22px;border-radius:15px;border:1px solid #e6e9f2;background:#fff;box-shadow:0 8px 24px rgba(9,28,53,.075);scroll-margin-top:28px}
+.v1-booking-heading h2 {font-family:Georgia,'Times New Roman',serif;color:#0b1530;font-size:30px;letter-spacing:-.04em;margin:4px 0 2px}
+.v1-booking-heading>p:last-child {margin:0;color:#68758d;font-size:13px}
+.v1-booking-top {display:flex;justify-content:space-between;align-items:center;gap:10px;padding:18px 0 14px;border-bottom:1px solid #e9edf4}
+.v1-starting-price {font-size:24px;color:#0e1d36}
+.v1-booking-top span {font-size:12px;color:#64718a}
+.v1-ticket {padding:17px 0;border-bottom:1px solid #eceef4}
+.v1-ticket-row {display:flex;align-items:start;justify-content:space-between;gap:10px}
+.v1-ticket-row h3 {margin:0;font-size:15px;font-weight:740;color:#121d35}
+.v1-ticket-row strong {font-size:16px;color:#111b34;white-space:nowrap}
+.v1-ticket-state {color:#159561;font-size:10px;letter-spacing:.05em;font-weight:760}
+.v1-ticket p {font-size:12px;margin:6px 0;color:#69768d}
+.v1-ticket-left {margin:8px 0;color:#6c7890;font-size:12px}
+.v1-ticket-form {display:grid;gap:7px;margin-top:12px}
+.v1-register-action {width:100%}
+.v1-guest-actions {display:grid;gap:10px;margin-top:18px;text-align:center}
+.v1-guest-actions p {margin:0;color:#5b6780;font-size:13px}
+.v1-guest-actions .v1-outline-button {width:100%}
+.v1-booking-note {color:#515e73;background:#f4f6fb;border:1px solid #e5eaf3;padding:12px;border-radius:10px;margin-top:12px;font-size:12px}
+.v1-booking-disclaimer {font-size:11px;color:#778397;margin:14px 0 0;line-height:1.55}
+.v1-ticket-form .ticket-coupon-box {padding:10px;background:#f8f9fc;border:1px solid #e8edf4;border-radius:10px}
+.v1-ticket-form .ticket-coupon-box label {font-size:11px;color:#58657a}
+.v1-ticket-form .ticket-coupon-row {display:flex;gap:7px}
+.v1-ticket-form .ticket-coupon-input {flex:1;min-width:0}
+.v1-ticket-form .coupon-code-input {min-height:35px;width:100%;color:#20304a;background:#fff;border:1px solid #dce2ec;border-radius:7px;font-size:12px;padding:0 9px}
+.v1-ticket-form .coupon-apply-button {padding:0 10px;border:1px solid #e4ca83;border-radius:7px;background:#fff4dc;color:#88630c;font-weight:680;font-size:12px}
+.v1-ticket-form .coupon-preview-result {font-size:12px;color:#245947}
+.v1-extra-info {padding-top:21px}
+.v1-extra-info .event-details-section {margin:0 0 20px;padding:20px;background:#fff;border:1px solid #e7ebf3;border-radius:13px;box-shadow:none}
+.v1-extra-info .event-details-section-head {gap:18px}
+.v1-extra-info .event-details-section-head h2 {color:#091832!important;font-family:Georgia,serif;font-size:25px!important;letter-spacing:-.035em}
+.v1-extra-info .event-details-section-head p {color:#6b7890!important}
+.v1-extra-info :is(.public-agenda-item,.public-speaker-card,.public-sponsor-card,.public-review-card,.program-empty,.public-agenda-content) {background:#f9fafd;color:#1e2b43;border-color:#e8ebf1}
+.v1-extra-info :is(.public-agenda-item,.public-speaker-card,.public-sponsor-card,.public-review-card) p {color:#58657d}
+.v1-extra-info :is(.public-speaker-card,.public-review-card,.public-sponsor-card) h3 {color:#0c1a30}
+.v1-extra-info .section-kicker {color:#ac7811}
+.v1-extra-info .program-count-badge {background:#f7f8fb;color:#526079;border:1px solid #e9ecf2}
+.v1-extra-info .public-gallery-grid {grid-template-columns:repeat(3,minmax(0,1fr))}
+.v1-extra-info .public-gallery-item {max-height:170px}
+/* Keep old feedback/gallery modal interactions readable over the new light page. */
+.v1-details-page :is(.feedback-modal,.gallery-lightbox) {z-index:120}
+.v1-details-page .feedback-modal-card {color:#0a1530;background:#fff;border:1px solid #e1e6f0}
+.v1-details-page .feedback-modal-card input,.v1-details-page .feedback-modal-card textarea {background:#fff;color:#17213b;border:1px solid #dae0ea}
+/* FOOTER reuses the existing footer content without changing its links. */
+.v1-page .public-footer {margin-top:36px;border-top:1px solid #e9ebf2;background:#fafbfe;color:#1c2a44;padding:34px 0 0}
+.v1-page .public-footer-inner {width:min(1120px,calc(100% - 48px));margin:auto;display:flex;justify-content:space-between;gap:24px}
+.v1-page .public-footer :is(.public-footer-developer,.public-footer-contact)>span {font-size:11px;letter-spacing:.14em;color:#727f93;font-weight:700}
+.v1-page .public-footer-developer>strong {display:block;font-size:16px;margin-top:5px}
+.v1-page .public-footer-developer p {margin:5px 0;font-size:12px;color:#6b7789}
+.v1-page .public-contact-links {display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+.v1-page .public-contact-links a {display:flex;align-items:center;gap:7px;font-size:12px;color:#42506a}
+.v1-page .public-contact-links img {width:20px;height:20px;object-fit:contain}
+.v1-page .public-contact-links small {display:none}
+.v1-page .public-mail-icon {font-size:17px;color:#b7800b}
+.v1-page .public-footer-bottom {text-align:center;padding:18px;color:#778397;font-size:12px;border-top:1px solid #eff1f4;margin-top:24px}
+@media(max-width:1200px) {
+.v1-container {width:min(1100px,calc(100% - 44px))}
+.v1-header-inner {grid-template-columns:1fr auto 1fr}
+.v1-main-nav {gap:22px}
+.v1-header-actions {gap:17px}
+.v1-event-grid {grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+.v1-filters {grid-template-columns:2fr 1fr .9fr .9fr 98px;gap:8px}
+.v1-details-columns {grid-template-columns:minmax(0,1fr) 330px;gap:19px}
+}
+@media(max-width:850px) {
+.v1-header {height:auto;min-height:72px}
+.v1-header-inner {grid-template-columns:1fr auto;grid-template-rows:65px auto;gap:0 10px}
+.v1-brand img {width:164px;max-height:56px}
+.v1-main-nav {grid-column:1/-1;grid-row:2;justify-content:center;gap:28px;min-height:38px}
+.v1-main-nav a {font-size:13px;min-height:38px}
+.v1-main-nav a.is-active::after {bottom:0}
+.v1-header-actions {grid-column:2;grid-row:1;gap:12px}
+.v1-nav-search {width:25px}
+.v1-nav-search svg {width:19px}
+.v1-login {font-size:13px}
+.v1-signup {padding:0 12px;min-height:35px;font-size:12px}
+.v1-explore-intro {height:157px}
+.v1-event-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+.v1-filters {grid-template-columns:1fr 1fr 1fr}
+.v1-field-search {grid-column:1/-1}
+.v1-filters .v1-gold-button {grid-column:3}
+.v1-details-columns {grid-template-columns:1fr}
+.v1-details-cover {height:300px;min-height:0}
+.v1-booking-panel {position:static;grid-row:1}
+.v1-extra-info .public-gallery-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:540px) {
+.v1-container {width:calc(100% - 30px)}
+.v1-header-inner {grid-template-columns:1fr auto}
+.v1-brand img {width:141px}
+.v1-main-nav {gap:20px}
+.v1-header-actions {gap:10px}
+.v1-signup {padding:0 11px}
+.v1-nav-search {display:none}
+.v1-explore-intro {height:152px}
+.v1-explore-intro h1 {font-size:35px}
+.v1-explore-intro p:not(.v1-eyebrow) {font-size:13px}
+.v1-explore-content {padding-top:17px}
+.v1-filters {grid-template-columns:1fr 1fr;padding:11px}
+.v1-filters select {font-size:12px}
+.v1-filters .v1-gold-button {grid-column:1/-1}
+.v1-category-pills {flex-wrap:nowrap;overflow:auto;margin-right:-15px;padding:14px 15px 13px 0}
+.v1-category-button {white-space:nowrap}
+.v1-list-heading h2 {font-size:27px}
+.v1-event-grid {grid-template-columns:1fr;gap:14px}
+.v1-event-card {min-height:0}
+.v1-card-photo {height:185px}
+.v1-event-card-body {padding:15px}
+.v1-details-main {padding-top:14px}
+.v1-details-cover {height:215px}
+.v1-details-facts {grid-template-columns:1fr}
+.v1-details-overview h1 {font-size:32px}
+.v1-booking-panel {padding:16px}
+.v1-extra-info .event-details-section {padding:14px}
+.v1-page .public-footer-inner {display:block}
+.v1-page .public-footer-contact {margin-top:22px}
+}
+/* Browsing filters must actually hide non-matching cards, regardless of grid display rules. */
+.v1-page [hidden] {display:none!important}
+
+/* Override legacy dark coupon controls inside the V1 ticket panel. */
+.v1-details-page .v1-ticket-form .ticket-coupon-input {background:#fff!important;border:0!important;box-shadow:none!important;color:#0c1730!important}
+.v1-details-page .v1-ticket-form .ticket-coupon-input input {display:block;background:#fff!important;color:#0c1730!important;border:1px solid #dce2ec!important;box-shadow:none!important;width:100%;height:36px;padding:0 8px}
+.v1-details-page .v1-ticket-form .coupon-apply-button {display:inline-grid;place-items:center;min-height:36px;background:#fff4dc!important;border:1px solid #e4ca83!important;color:#79520a!important;box-shadow:none!important}
+
+/* Unified, accessible single-gold focus for all public event filters. */
+.v1-page .v1-field-search{border:1px solid #dfe5ee!important;box-shadow:none;transition:border-color .16s,box-shadow .16s}
+.v1-page .v1-field-search:focus-within{border-color:#d7a222!important;box-shadow:0 0 0 3px rgba(218,162,30,.16)!important}
+.v1-page .v1-field-search input,.v1-page .v1-field-search input:focus,.v1-page .v1-field-search input:focus-visible{
+ border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important
+}
+.v1-page .v1-filters select:focus-visible{outline:0;box-shadow:0 0 0 3px rgba(218,162,30,.16);border-color:#d7a222}
+
+
+/* Public event-program empty states: override old dark-theme palette. */
+.v1-details-page .v1-extra-info .program-empty h3,
+.v1-details-page .v1-extra-info .program-empty strong {color:#152343!important;opacity:1!important;}
+.v1-details-page .v1-extra-info .program-empty p {color:#53657c!important;opacity:1!important;}
+.v1-details-page .v1-extra-info .program-empty {background:#f8fafc!important;border-color:#e1e7f0!important;}
+.v1-page :is(input,select,textarea):focus-visible {outline:0!important;border-color:#dba42f!important;box-shadow:0 0 0 3px rgba(218,163,29,.18)!important;}
+.v1-page :is(input,select,textarea)::placeholder {color:#7a879b;opacity:1;}
+.v1-page .public-contact-links img.gmail-mark {width:24px;height:24px;object-fit:contain;}
+
+.v1-page .public-footer .public-mail-icon {
+  background:transparent!important;box-shadow:none!important;border:0!important;
+  color:inherit!important;border-radius:0!important;
+}
+.v1-page .public-footer .public-mail-icon img.gmail-mark {width:24px;height:24px;}
+
+/* High contrast, one focus indicator for public filters and published event details. */
+body.v1-page .v1-field-search input:focus,
+body.v1-page .v1-field-search input:focus-visible {outline:0!important;box-shadow:none!important;border:0!important;}
+body.v1-page .v1-field-search:focus-within {border-color:#d0a138;box-shadow:0 0 0 3px rgba(210,165,55,.16);}
+body.v1-page .v1-filters :is(select,input):focus-visible {outline:0;box-shadow:0 0 0 3px rgba(210,165,55,.15);border-color:#c99b2d;}
+body.v1-page .v1-extra-info .program-empty :is(h2,h3,strong),
+body.v1-page .v1-extra-info .public-agenda-content :is(h3,strong),
+body.v1-page .v1-extra-info .public-speaker-card :is(h3,strong) {color:#13213b!important;opacity:1!important;}
+body.v1-page .v1-extra-info .program-empty p {color:#536781!important;opacity:1!important;}
+
+/* Paid ticket coupon: remove the old 32px icon column and protect input visibility. */
+.v1-details-page .v1-ticket-form .ticket-coupon-row{display:flex!important;grid-template-columns:none!important;gap:10px!important;align-items:stretch;width:100%}
+.v1-details-page .v1-ticket-form .ticket-coupon-input{display:block!important;flex:1 1 0!important;min-width:0!important;width:auto!important;background:#fff!important;border:1px solid #dbe2ed!important;border-radius:10px!important;box-shadow:none!important;min-height:46px}
+.v1-details-page .v1-ticket-form .ticket-coupon-input .coupon-code-input{box-sizing:border-box;display:block!important;width:100%!important;min-width:0!important;padding:0 12px!important;height:46px!important;line-height:46px!important;color:#10203f!important;font-size:15px!important;font-weight:600!important;background:transparent!important;border:0!important;outline:0;box-shadow:none!important}
+.v1-details-page .v1-ticket-form .ticket-coupon-input .coupon-code-input:focus{box-shadow:0 0 0 3px rgba(224,161,16,.16)!important;border-radius:9px}
+.v1-details-page .v1-ticket-form .ticket-coupon-input .coupon-code-input::placeholder{color:#73819c;opacity:1;text-transform:none}
+.v1-details-page .v1-ticket-form .ticket-coupon-row .coupon-apply-button{flex:0 0 98px!important;min-height:46px;padding:0 10px!important;white-space:nowrap}
+.ef-payment-record-label,.ef-payment-record-warning{font-size:11px;font-weight:800;padding:5px 8px;border-radius:8px;display:inline-flex;margin-left:10px}
+.ef-payment-record-label{background:#e6f7ee;color:#08754e}.ef-payment-record-warning{background:#fff4dd;color:#95640b}
+@media(max-width:400px){.v1-details-page .v1-ticket-form .ticket-coupon-row .coupon-apply-button{flex-basis:76px!important}}

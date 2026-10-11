@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#ffffff">
+    <title>EventFlow | Past Events</title>
+    <link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png(v='20260923ops1')}" href="/images/eventflow-favicon.png?v=20260923ops1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css(v=20261011clean)}" href="/css/site.css?v=20261011clean">
+    <link rel="stylesheet" th:href="@{/css/workspace-final.css(v=20261011full)}" href="/css/workspace-final.css?v=20261011full">
+</head>
+<body class="ef-workspace">
+<div th:replace="~{fragments :: topbar}"></div>
+<div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('past-events')}"></div>
+    <main class="app-main">
+        <section class="page-heading"><div><span class="section-kicker">ADMIN CONTROL</span><h1>Past Events</h1><p>Review completed events, historical bookings and participant ratings across EventFlow.</p></div></section>
+
+        <section class="operations-metric-grid">
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-calendar2-check"></i></span><div><small>Completed Events</small><strong th:text="${#lists.size(events)}">0</strong><span>platform history</span></div></article>
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-ticket-perforated"></i></span><div><small>Past Bookings</small><strong th:text="${pastBookingCount}">0</strong><span>historical registrations</span></div></article>
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-star"></i></span><div><small>Rated Events</small><strong th:text="${reviewedEventCount}">0</strong><span>with feedback</span></div></article>
+            <article class="operations-metric-card"><span class="operations-metric-icon"><i class="bi bi-star-fill"></i></span><div><small>Average Rating</small><strong th:text="${overallFeedback.totalReviews > 0 ? #numbers.formatDecimal(overallFeedback.averageRating, 1, 1) : '—'}">—</strong><span th:text="${overallFeedback.totalReviews > 0 ? overallFeedback.totalReviews + ' reviews' : 'No reviews yet'}">No reviews yet</span></div></article>
+        </section>
+
+        <section class="table-card operations-table-card" data-smart-table data-row-label="event" data-row-label-plural="events">
+            <div class="operations-toolbar">
+                <label class="table-search"><i class="bi bi-search"></i><input data-table-search type="search" placeholder="Search event, organizer, category or location..."></label>
+                <select class="toolbar-select" data-table-filter="category" aria-label="Filter by category"><option value="ALL">All categories</option><option th:each="category : ${categories}" th:value="${category}" th:text="${category}">Category</option></select>
+                <select class="toolbar-select compact-toolbar-select" data-table-filter="pricing" aria-label="Filter by pricing"><option value="ALL">Free & Paid</option><option value="FREE">Free</option><option value="PAID">Paid</option></select>
+                <div class="table-count" data-table-count th:text="${#lists.size(events) + ' events'}">0 events</div>
+            </div>
+            <div class="data-table-wrap" th:if="${!#lists.isEmpty(events)}">
+                <table class="data-table past-events-table admin-past-events-table"><thead><tr><th>Event</th><th>Organizer</th><th>Date & Time</th><th>Bookings</th><th>Capacity Used</th><th>Rating</th><th class="actions-column">Actions</th></tr></thead>
+                    <tbody data-table-body>
+                    <tr th:each="event : ${events}" th:with="summary=${feedbackSummaries[event.id]},bookings=${registrationCounts[event.id]},efPaid=${@display.paid(event)}" th:attr="data-search=${event.title + ' ' + event.organizerName + ' ' + event.location + ' ' + event.category},data-category=${event.category},data-pricing=${efPaid ? 'PAID' : 'FREE'}">
+                        <td><div class="event-table-title"><img data-event-image th:attr="data-event-category=${event.category}" th:with="efListingImage=${@display.listingImageUrl(event)}" th:src="${efListingImage}" alt="" loading="lazy" decoding="async"><div><strong th:text="${event.title}">Event</strong><small><span th:text="${event.category}">Category</span> · <span th:text="${event.location}">Location</span></small><span class="table-pricing-label" th:classappend="${@display.paid(event)} ? ' paid' : ' free'" th:text="${@display.paid(event) ? 'Paid' : 'Free'}">Free</span></div></div></td>
+                        <td th:text="${event.organizerName}">Organizer</td>
+                        <td><div class="booking-date-cell"><strong th:text="${@display.eventDate(event)}">Date</strong><small th:text="${@display.eventTime(event)}">Time</small></div></td>
+                        <td><strong th:text="${bookings + ' / ' + event.capacity}">0 / 100</strong></td>
+                        <td><div class="table-progress-cell"><div><span th:text="${event.capacity > 0 ? (bookings * 100 / event.capacity) + '%' : '0%'}">0%</span></div><div class="progress-track"><span th:style="|width:${event.capacity > 0 ? (bookings * 100 / event.capacity) : 0}%|"></span></div></div></td>
+                        <td><span class="table-rating" th:if="${summary != null and summary.totalReviews > 0}"><i class="bi bi-star-fill"></i><strong th:text="${#numbers.formatDecimal(summary.averageRating, 1, 1)}">4.8</strong><small th:text="${'(' + summary.totalReviews + ')'}">(0)</small></span><span class="table-rating empty" th:if="${summary == null or summary.totalReviews == 0}">No ratings</span></td>
+                        <td class="action-cell past-event-action-cell"><div class="past-event-actions"><a class="small-action-button" th:href="@{/admin/registrations(eventId=${event.id})}" title="View bookings"><i class="bi bi-ticket-perforated"></i></a><a class="small-action-button" th:href="|/admin/feedback#review-event-${event.id}|" title="View event reviews"><i class="bi bi-star"></i></a></div></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="clean-empty" th:if="${#lists.isEmpty(events)}"><i class="bi bi-clock-history"></i><h3>No past events yet</h3><p>Completed events will appear here automatically after their date and time pass.</p></div>
+            <div class="clean-empty filtered-empty" data-table-empty><i class="bi bi-search"></i><h3>No matching past events</h3><p>Try another search term.</p></div>
+            <div class="operations-table-footer" th:if="${!#lists.isEmpty(events)}"><div class="table-page-size"><span>Show</span><select data-table-page-size><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="ALL">All</option></select><span>entries</span></div><div class="table-range" data-table-range>Showing 0 of 0</div><div class="table-pagination" data-table-pagination></div></div>
+        </section>
+    </main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div><script th:src="@{/js/site.js(v='20260923finalfix4')}" src="/js/site.js?v=20260923finalfix4"></script>
+
+<script th:src="@{/js/workspace-final.js(v=20261011clean)}" src="/js/workspace-final.js?v=20261011clean" defer></script>
+</body>
+</html>

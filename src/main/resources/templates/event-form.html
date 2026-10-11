@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'EventFlow | ' + ${pageTitle}">EventFlow | Event</title>
+    <link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png(v='20260923final')}" href="/images/eventflow-favicon.png?v=20260923final">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css(v=20261011clean)}" href="/css/site.css?v=20261011clean">
+    <link rel="stylesheet" th:href="@{/css/workspace-final.css(v=20261011full)}" href="/css/workspace-final.css?v=20261011full">
+</head>
+<body class="ef-workspace">
+<div th:replace="~{fragments :: topbar}"></div>
+<div class="app-shell">
+    <th:block th:if="${currentUser.role == 'ORGANIZER'}"><div th:replace="~{fragments :: sidebar('create')}"></div></th:block>
+    <th:block th:if="${currentUser.role == 'ADMIN'}"><div th:replace="~{fragments :: sidebar('manage-events')}"></div></th:block>
+    <main class="app-main">
+        <section class="page-heading compact-heading">
+            <div><span class="section-kicker">EVENT DETAILS</span><h1 th:text="${pageTitle}">Create Event</h1><p>Use clear information so participants know exactly what to expect.</p></div>
+        </section>
+
+        <form class="event-form-card" id="eventForm" th:action="${formAction}" method="post" enctype="multipart/form-data" novalidate data-loading>
+            <div class="form-section-title"><div class="form-step">1</div><div><h2>Event information</h2><p>Basic details participants will see first.</p></div></div>
+            <div class="form-grid two-columns">
+                <div class="field-group full-width"><label for="title">Event title</label><input id="title" name="title" type="text" minlength="3" maxlength="80" required th:value="${event.title}" placeholder="e.g. Tech Innovation Summit"><small class="field-error" data-error-for="title"></small></div>
+                <div class="field-group"><label for="category">Category</label><select id="category" name="category" required><option value="">Select category</option><option th:selected="${event.category == 'Technology'}">Technology</option><option th:selected="${event.category == 'Business'}">Business</option><option th:selected="${event.category == 'Education'}">Education</option><option th:selected="${event.category == 'Health'}">Health</option><option th:selected="${event.category == 'Design'}">Design</option><option th:selected="${event.category == 'Music'}">Music</option><option th:selected="${event.category == 'Career'}">Career</option><option th:selected="${event.category == 'Sports'}">Sports</option><option th:selected="${event.category == 'Community'}">Community</option><option th:selected="${event.category == 'Other'}">Other</option></select><small class="field-error" data-error-for="category"></small></div>
+                <div class="field-group"><label for="capacity">Capacity</label><input id="capacity" name="capacity" type="number" th:attr="min=${currentRegistrationCount != null and currentRegistrationCount > 0 ? currentRegistrationCount : 1}" max="100000" required th:value="${event.capacity > 0 ? event.capacity : ''}" placeholder="100"><small class="field-error" data-error-for="capacity"></small></div>
+                <div class="field-group">
+                    <label for="date">Date</label>
+                    <div class="event-picker-field">
+                        <input id="date" name="date" type="text" required autocomplete="off" readonly th:value="${event.date}" placeholder="Select event date">
+                        <button type="button" class="event-picker-button" id="openDatePicker" aria-label="Open calendar">
+                            <i class="bi bi-calendar3"></i>
+                        </button>
+                    </div>
+                    <small class="field-error" data-error-for="date"></small>
+                </div>
+                <div class="field-group">
+                    <label for="time">Start time</label>
+                    <div class="event-picker-field">
+                        <input id="time" name="time" type="text" required autocomplete="off" readonly th:value="${event.time}" placeholder="Select start time">
+                        <button type="button" class="event-picker-button" id="openTimePicker" aria-label="Open time picker">
+                            <i class="bi bi-clock"></i>
+                        </button>
+                    </div>
+                    <small class="field-error" data-error-for="time"></small>
+                </div>
+                <div class="field-group full-width"><label for="location">Location</label><input id="location" name="location" type="text" minlength="3" maxlength="100" required th:value="${event.location}" placeholder="Venue or address"><small class="field-error" data-error-for="location"></small></div>
+                <div class="field-group full-width"><div class="label-row"><label for="description">Description</label><span id="descriptionCounter">0 / 1000</span></div><textarea id="description" name="description" minlength="20" maxlength="1000" rows="6" required placeholder="Describe the event, audience and what participants can expect..." th:text="${event.description}"></textarea><small class="field-error" data-error-for="description"></small></div>
+            </div>
+
+            <div class="form-divider"></div>
+            <div class="form-section-title"><div class="form-step">2</div><div><h2>Ticketing</h2><p>Choose whether the event is free or paid. Ticket types can be managed after the event is saved.</p></div></div>
+            <div class="ticketing-mode-grid" id="ticketingModeGrid">
+                <label class="ticketing-mode-option">
+                    <input type="radio" name="pricingType" value="FREE" th:checked="${@display.pricingType(event) == 'FREE'}">
+                    <span class="ticketing-mode-icon"><i class="bi bi-ticket-perforated"></i></span>
+                    <span><strong>Free Event</strong><small>Participants can reserve a place without a ticket charge.</small></span>
+                    <i class="bi bi-check-circle-fill ticketing-mode-check"></i>
+                </label>
+                <label class="ticketing-mode-option">
+                    <input type="radio" name="pricingType" value="PAID" th:checked="${@display.pricingType(event) == 'PAID'}">
+                    <span class="ticketing-mode-icon"><i class="bi bi-cash-stack"></i></span>
+                    <span><strong>Paid Event</strong><small>Set a base ticket price and optionally create multiple ticket types.</small></span>
+                    <i class="bi bi-check-circle-fill ticketing-mode-check"></i>
+                </label>
+            </div>
+            <div class="paid-price-panel" id="paidPricePanel" th:classappend="${@display.pricingType(event) != 'PAID'} ? ' hidden' : ''">
+                <div class="field-group">
+                    <label for="basePrice">Base ticket price (BDT)</label>
+                    <div class="money-input-wrap"><span>৳</span><input id="basePrice" name="basePrice" type="number" min="0.01" step="0.01" max="10000000" th:value="${@display.pricingType(event) == 'PAID' ? @display.basePrice(event) : ''}" placeholder="500"></div>
+                    <small class="field-error" data-error-for="basePrice"></small>
+                </div>
+                <div class="ticketing-helper"><i class="bi bi-info-circle"></i><span>After saving, open <strong>Program</strong> to add ticket types such as General, VIP or Student with separate capacities and prices.</span></div>
+            </div>
+
+            <div class="form-divider"></div>
+            <div class="form-section-title"><div class="form-step">3</div><div><h2>Event image</h2><p>JPG, PNG or WEBP. Maximum 2 MB.</p></div></div>
+            <label class="image-upload-box" for="image">
+                <img data-event-image th:attr="data-event-category=${event != null ? event.category : 'Other'}" id="imagePreview" th:with="efListingImage=${@display.listingImageUrl(event)}" th:src="${efListingImage}" src="/images/event-visual.png" alt="Event preview">
+                <div class="image-upload-overlay"><i class="bi bi-cloud-arrow-up"></i><strong>Choose event image</strong><span>Click to select a file</span></div>
+                <input id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp">
+            </label>
+            <small class="field-error image-error" data-error-for="image"></small>
+
+            <div class="form-actions-row">
+                <a class="secondary-button" th:href="${currentUser.role == 'ADMIN' ? '/admin/events' : '/organizer/events'}">Cancel</a>
+                <button class="primary-button" type="submit"><i class="bi bi-check2"></i><span th:text="${submitLabel}">Save Event</span></button>
+            </div>
+        </form>
+    </main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script th:src="@{/js/site.js(v='20260923couponcontact1')}" src="/js/site.js?v=20260923couponcontact1"></script>
+
+<script th:src="@{/js/workspace-final.js(v=20261011clean)}" src="/js/workspace-final.js?v=20261011clean" defer></script>
+</body>
+</html>

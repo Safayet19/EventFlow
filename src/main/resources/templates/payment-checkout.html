@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Checkout | EventFlow</title>
+<link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png}" href="/images/eventflow-favicon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" th:href="@{/css/site.css(v=20261011clean)}" href="/css/site.css">
+<link rel="stylesheet" th:href="@{/css/public.css(v=20261010v1)}" href="/css/public.css">
+<link rel="stylesheet" th:href="@{/css/v1-public.css(v=20261011pay)}" href="/css/v1-public.css">
+<link rel="stylesheet" th:href="@{/css/payment.css(v=20261011pay)}" href="/css/payment.css">
+</head>
+<body class="v1-page ef-payment-page">
+<div th:replace="~{fragments :: v1Nav('events')}"></div>
+<main class="ef-checkout-wrap">
+  <a class="ef-checkout-back" th:href="@{'/events/' + ${event.id} + '#tickets'}"><i class="bi bi-arrow-left"></i> Back to event</a>
+  <section class="ef-checkout-card">
+    <div class="ef-payment-heading"><span>EVENT CHECKOUT</span><h1>Complete Registration</h1>
+      <p>Review your ticket and complete your registration.</p></div>
+    <div class="ef-checkout-event">
+      <img th:src="${event.imageUrl != null and !event.imageUrl.isBlank() ? event.imageUrl : '/images/event-visual.png'}" src="/images/event-visual.png" alt="Event cover" onerror="this.onerror=null;this.src='/images/event-visual.png'">
+      <div class="ef-checkout-event-info"><h2 th:text="${event.title}">Event name</h2>
+        <p><i class="bi bi-calendar3"></i> <span th:text="${@display.eventDate(event) + ' · ' + @display.eventTime(event)}">Date and time</span></p>
+        <p><i class="bi bi-geo-alt"></i> <span th:text="${event.location}">Location</span></p>
+        <strong th:text="${quote.ticketTypeName}">Standard</strong>
+      </div>
+    </div>
+    <form th:action="@{'/participant/events/' + ${event.id} + '/pay'}" method="post" id="efPaymentForm" data-loading>
+      <input type="hidden" name="ticketTypeId" th:value="${quote.ticketTypeId}">
+      <div class="ef-payment-section-head"><h2>Payment method</h2></div>
+      <div class="ef-payment-methods" role="radiogroup" aria-label="Preferred payment method">
+        <label class="ef-method-option"><input type="radio" name="paymentMethod" value="BKASH" required><span class="ef-method-tile"><i class="bi bi-check-circle-fill ef-method-check"></i><img th:src="@{/images/payment-bkash.png}" src="/images/payment-bkash.png" alt="bKash"></span></label>
+        <label class="ef-method-option"><input type="radio" name="paymentMethod" value="NAGAD" required><span class="ef-method-tile"><i class="bi bi-check-circle-fill ef-method-check"></i><img th:src="@{/images/payment-nagad.png}" src="/images/payment-nagad.png" alt="Nagad"></span></label>
+        <label class="ef-method-option"><input type="radio" name="paymentMethod" value="VISA" required><span class="ef-method-tile"><i class="bi bi-check-circle-fill ef-method-check"></i><img th:src="@{/images/payment-visa.png}" src="/images/payment-visa.png" alt="Visa"></span></label>
+      </div>
+      <p class="ef-method-note" id="efMethodNote" aria-live="polite">Choose a payment method.</p>
+      <div class="ef-checkout-divider"></div>
+      <div class="ef-promo-field" id="efCheckoutCoupon" th:attr="data-event-id=${event.id},data-ticket-id=${quote.ticketTypeId}">
+        <label for="efCouponCode">Promo code (optional)</label>
+        <div class="ef-promo-row"><input id="efCouponCode" name="couponCode" maxlength="20" autocomplete="off" placeholder="Enter coupon code" th:value="${couponInput}"><button type="button" id="efCouponApply">Apply</button></div>
+        <div id="efCouponResult" class="ef-promo-message" role="status" aria-live="polite"></div>
+      </div>
+      <div class="ef-price-list">
+        <div><span>Ticket price</span><strong id="efOriginalPrice" th:text="${'৳' + quote.originalPrice}">৳800</strong></div>
+        <div><span>Coupon discount</span><strong class="ef-discount" id="efDiscount" th:text="${'− ৳' + quote.discountAmount}">− ৳0</strong></div>
+        <div class="ef-price-total"><span>Total payable</span><strong id="efPayable" th:text="${'৳' + quote.total}">৳800</strong></div>
+      </div>
+      <button type="submit" class="ef-pay-submit"><i class="bi bi-lock"></i> Proceed to Payment <i class="bi bi-arrow-right"></i></button>
+    </form>
+  </section>
+</main>
+<div th:replace="~{fragments :: publicFooter}"></div>
+<div th:replace="~{fragments :: toasts}"></div>
+<script th:src="@{/js/site.js(v=20260923fullfix1)}" src="/js/site.js" defer></script>
+<script th:src="@{/js/payment-checkout.js(v=20261011simple)}" src="/js/payment-checkout.js" defer></script>
+</body>
+</html>

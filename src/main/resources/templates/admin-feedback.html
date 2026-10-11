@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#ffffff">
+    <title>EventFlow | Feedback Management</title>
+    <link rel="icon" type="image/png" th:href="@{/images/eventflow-favicon.png(v='20260923feedback2')}" href="/images/eventflow-favicon.png?v=20260923feedback2">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css(v=20261011clean)}" href="/css/site.css?v=20261011clean">
+    <link rel="stylesheet" th:href="@{/css/workspace-final.css(v=20261011full)}" href="/css/workspace-final.css?v=20261011full">
+</head>
+<body class="ef-workspace">
+<div th:replace="~{fragments :: topbar}"></div>
+<div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('feedback')}"></div>
+    <main class="app-main">
+        <section class="page-heading"><div><span class="section-kicker">ADMIN CONTROL</span><h1>Feedback & Ratings</h1><p>Review participant feedback event by event and moderate individual submissions when necessary.</p></div></section>
+
+        <section class="feedback-metric-grid">
+            <article class="feedback-metric-card"><div class="feedback-metric-icon"><i class="bi bi-star-fill"></i></div><div><span>Platform Rating</span><strong th:text="${overallFeedback.totalReviews > 0 ? #numbers.formatDecimal(overallFeedback.averageRating, 1, 1) : '—'}">—</strong><small th:text="${overallFeedback.totalReviews > 0 ? 'average out of 5.0' : 'No ratings yet'}">No ratings yet</small></div></article>
+            <article class="feedback-metric-card"><div class="feedback-metric-icon"><i class="bi bi-chat-square-text"></i></div><div><span>Total Reviews</span><strong th:text="${overallFeedback.totalReviews}">0</strong><small>feedback records</small></div></article>
+            <article class="feedback-metric-card"><div class="feedback-metric-icon"><i class="bi bi-stars"></i></div><div><span>5-Star Reviews</span><strong th:text="${overallFeedback.fiveStarReviews}">0</strong><small>top-rated submissions</small></div></article>
+            <article class="feedback-metric-card"><div class="feedback-metric-icon"><i class="bi bi-calendar2-check"></i></div><div><span>Rated Events</span><strong th:text="${reviewedEventCount}">0</strong><small>events with feedback</small></div></article>
+        </section>
+
+        <section class="feedback-feed-card admin-feedback-card">
+            <div class="feedback-section-heading">
+                <div><span class="section-kicker">REVIEW MODERATION</span><h2>Feedback by event</h2></div>
+                <span class="feedback-section-count" id="feedbackAdminCount" th:text="${#lists.size(ratedEvents) + (#lists.size(ratedEvents) == 1 ? ' rated event' : ' rated events')}">0 rated events</span>
+            </div>
+
+            <div class="feedback-toolbar" th:if="${!#lists.isEmpty(ratedEvents)}">
+                <label class="feedback-sort"><i class="bi bi-sort-down-alt"></i><select id="feedbackAdminSort" aria-label="Sort events by rating"><option value="HIGH">Highest rated first</option><option value="LOW">Lowest rated first</option></select></label>
+            </div>
+
+            <div class="feedback-event-review-groups" id="feedbackAdminList" th:if="${!#lists.isEmpty(ratedEvents)}">
+                <details class="feedback-event-review-group admin-feedback-event-group"
+                         th:each="event, eventStat : ${ratedEvents}"
+                         th:with="summary=${feedbackSummaries[event.id]},reviews=${feedbackByEvent[event.id]}"
+                         th:id="|review-event-${event.id}|"
+                         th:attr="data-rating=${summary.averageRating},data-review-count=${#lists.size(reviews)},open=${eventStat.index == 0 ? 'open' : null}">
+                    <summary class="feedback-event-review-summary">
+                        <div class="feedback-group-event-main">
+                            <img data-event-image th:attr="data-event-category=${event.category}" th:with="efListingImage=${@display.listingImageUrl(event)}" th:src="${efListingImage}" alt="Event image" loading="lazy" decoding="async">
+                            <div>
+                                <span class="category-label" th:text="${event.category}">Category</span>
+                                <h3 th:text="${event.title}">Event title</h3>
+                                <small><span th:text="${event.organizerName}">Organizer</span> · <span th:text="${@display.eventDate(event)}">Date</span></small>
+                            </div>
+                        </div>
+                        <div class="feedback-group-score">
+                            <div><i class="bi bi-star-fill"></i><strong th:text="${#numbers.formatDecimal(summary.averageRating, 1, 1)}">4.8</strong></div>
+                            <small th:text="${summary.totalReviews + (summary.totalReviews == 1 ? ' review' : ' reviews')}">0 reviews</small>
+                        </div>
+                        <i class="bi bi-chevron-down feedback-group-chevron"></i>
+                    </summary>
+
+                    <div class="feedback-event-review-body">
+                        <div class="feedback-group-distribution">
+                            <div class="rating-bar-row" th:each="rating : ${#numbers.sequence(5,1,-1)}"><span th:text="${rating}">5</span><i class="bi bi-star-fill"></i><div class="rating-bar-track"><span th:style="|width:${summary.totalReviews > 0 ? (summary.countFor(rating) * 100 / summary.totalReviews) : 0}%|"></span></div><em th:text="${summary.countFor(rating)}">0</em></div>
+                        </div>
+
+                        <div class="feedback-review-list grouped-review-list">
+                            <article class="feedback-review-item admin-review-item" th:each="item : ${reviews}">
+                                <div class="feedback-review-top"><div class="feedback-review-person"><span class="feedback-review-avatar"><i class="bi bi-person"></i></span><div><strong th:text="${item.participantName}">Participant</strong><small th:text="${item.participantEmail}">email@example.com</small></div></div><div class="feedback-review-rating"><div class="display-stars compact"><i class="bi bi-star-fill" th:each="star : ${#numbers.sequence(1,5)}" th:classappend="${star <= item.rating} ? ' active' : ''"></i></div><strong th:text="${item.rating + '/5'}">5/5</strong></div></div>
+                                <p th:if="${item.comment != null and !item.comment.isBlank()}" th:text="${item.comment}">Review comment</p><p class="feedback-no-comment" th:if="${item.comment == null or item.comment.isBlank()}">Rating submitted without a written comment.</p>
+                                <div class="feedback-review-footer admin-feedback-footer"><span><i class="bi bi-clock"></i><span th:text="${@display.feedbackUpdated(item)}">Date</span></span><form class="inline-form confirm-form" th:action="@{'/admin/feedback/' + ${item.id} + '/delete'}" method="post" th:attr="data-confirm-title='Remove this feedback?',data-confirm='This participant review will be permanently removed from EventFlow.',data-confirm-action='Remove Feedback'"><button class="small-danger-text-button" type="submit"><i class="bi bi-trash3"></i>Remove</button></form></div>
+                            </article>
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+            <div class="clean-empty" th:if="${#lists.isEmpty(ratedEvents)}"><i class="bi bi-chat-square-heart"></i><h3>No feedback submitted yet</h3><p>Participant reviews will appear here after completed events.</p></div>
+        </section>
+    </main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div><div th:replace="~{fragments :: confirmModal}"></div><script th:src="@{/js/site.js(v='20260923ratingsort1')}" src="/js/site.js?v=20260923ratingsort1"></script>
+
+<script th:src="@{/js/workspace-final.js(v=20261011clean)}" src="/js/workspace-final.js?v=20261011clean" defer></script>
+</body>
+</html>
