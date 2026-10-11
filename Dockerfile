@@ -1,6 +1,6 @@
 FROM amazoncorretto:26 AS build
 
-RUN yum install -y wget tar gzip && yum clean all
+RUN yum install -y wget tar gzip unzip && yum clean all
 
 WORKDIR /app
 
